@@ -5,8 +5,6 @@ VisualStudioVersion = 17.3.32804.467
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalERP.WebApp", "RoyalERP.WebApp\RoyalERP.WebApp.csproj", "{BCFB39B6-E665-402D-BD8A-B12C39220BD2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalERP.API.Contracts", "..\RoyalERP.API\RoyalERP.API.Contracts\RoyalERP.API.Contracts.csproj", "{432363D7-9360-4F43-A622-A8B4E1F6A4AC}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{1E2112AE-080C-4E81-8D0C-921AB0C36A58}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\deploy.yml = .github\workflows\deploy.yml
@@ -23,10 +21,6 @@ Global
 		{BCFB39B6-E665-402D-BD8A-B12C39220BD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCFB39B6-E665-402D-BD8A-B12C39220BD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCFB39B6-E665-402D-BD8A-B12C39220BD2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{432363D7-9360-4F43-A622-A8B4E1F6A4AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{432363D7-9360-4F43-A622-A8B4E1F6A4AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{432363D7-9360-4F43-A622-A8B4E1F6A4AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{432363D7-9360-4F43-A622-A8B4E1F6A4AC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
