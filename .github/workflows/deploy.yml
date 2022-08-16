@@ -33,4 +33,4 @@ jobs:
         KEY: ${{ secrets.SSHKEY }}
       with:
         source: "./html/"
-        target: "~/prod/nginx/html"
+        target: "~/prod/nginx/"
