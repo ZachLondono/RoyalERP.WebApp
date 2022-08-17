@@ -57,55 +57,9 @@
     private List<Company> _companies = new();
 
     protected override async Task OnInitializedAsync() {
+        
         await LoadCompanies();
 
-        _companies.Add(new() {
-            Id = Guid.NewGuid(),
-            Name = "Company A",
-            Contact = "John",
-            Email = "abc@def.com",
-            Version = 1,
-            Address = new() {
-                Line1 = "Line1",
-                Line2 = "Line2",
-                Line3 = "Line3",
-                City = "City",
-                State = "State",
-                Zip = "Zip"
-            }
-        });
-
-        _companies.Add(new() {
-            Id = Guid.NewGuid(),
-            Name = "Company B",
-            Contact = "Bob",
-            Email = "abc@def.com",
-            Version = 1,
-            Address = new() {
-                Line1 = "Line1",
-                Line2 = "Line2",
-                Line3 = "Line3",
-                City = "City",
-                State = "State",
-                Zip = "Zip"
-            }
-            });
-
-        _companies.Add(new() {
-            Id = Guid.NewGuid(),
-            Name = "Company C",
-            Contact = "Sally",
-            Email = "abc@def.com",
-            Version = 1,
-            Address = new() {
-                Line1 = "Line1",
-                Line2 = "Line2",
-                Line3 = "Line3",
-                City = "City",
-                State = "State",
-                Zip = "Zip"
-            }
-        });
     }
 
     private async Task LoadCompanies() {

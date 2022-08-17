@@ -69,161 +69,161 @@
                             <div class="row">
                                 <div class="col">
                                     <RadzenTabs>
-                                <Tabs>
+                                        <Tabs>
                                     <RadzenTabsItem Text="Scheduler">
 
-                                        <!-- Late Orders -->
-                                        @if (_selectedProductWorkOrders.Where(o => o.Status.Equals("InProgress") && o.ScheduledDate < DateTime.Today).Any()) {
-                                            <RadzenPanel AllowCollapse="true" Style="margin: 0px auto;">
-                                                <HeaderTemplate>
-                                                    <h4 class="m-0 d-flex align-items-center">
-                                                        <RadzenIcon Icon="hourglass_full" IconStyle="IconStyle.Danger" Class="mr-1" /><b>Late</b>
-                                                    </h4>
-                                                </HeaderTemplate>
+                                                <!-- Late Orders -->
+                                                @if (_selectedProductWorkOrders.Where(o => o.Status.Equals("InProgress") && o.ScheduledDate < DateTime.Today).Any()) {
+                                                    <RadzenPanel AllowCollapse="true" Style="margin: 0px auto;">
+                                                        <HeaderTemplate>
+                                                            <h4 class="m-0 d-flex align-items-center">
+                                                                <RadzenIcon Icon="hourglass_full" IconStyle="IconStyle.Danger" Class="mr-1" /><b>Late</b>
+                                                            </h4>
+                                                        </HeaderTemplate>
 
-                                                <ChildContent>
-                                                    <RadzenDataGrid Class="mt-3" TItem="WorkOrder" Data="@_selectedProductWorkOrders.Where(o => o.Status.Equals("InProgress") && o.ScheduledDate < DateTime.Today)" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
-                                                        <Columns>
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Number" Title="Number" />
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Name" Title="Name" />
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="CustomerName" Title="Customer" />
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="VendorName" Title="Vendor" />
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Quantity" Title="Qty" />
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Title="Scheduled" Property="ScheduledDate" Sortable="true">
-                                                                <Template Context="order">
-                                                                    <span @onclick="OpenScheduler" class="link">
-                                                                        @if (order.ScheduledDate is null) {
-                                                                            <span>no date</span>
-                                                                        } else {
-                                                                            <span>@DateTimeString((DateTime)order.ScheduledDate)</span>
-                                                                        }
-                                                                    </span>
-                                                                </Template>
-                                                            </RadzenDataGridColumn>
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false">
-                                                                <Template Context="order">
-                                                                    <RadzenButton>Complete</RadzenButton>
-                                                                </Template>
-                                                            </RadzenDataGridColumn>
-                                                        </Columns>
-                                                    </RadzenDataGrid>
-                                                </ChildContent>
+                                                        <ChildContent>
+                                                            <RadzenDataGrid Class="mt-3" TItem="WorkOrder" Data="@_selectedProductWorkOrders.Where(o => o.Status.Equals("InProgress") && o.ScheduledDate < DateTime.Today)" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
+                                                                <Columns>
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Number" Title="Number" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Name" Title="Name" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="CustomerName" Title="Customer" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="VendorName" Title="Vendor" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Quantity" Title="Qty" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Title="Scheduled" Property="ScheduledDate" Sortable="true">
+                                                                        <Template Context="order">
+                                                                            <span @onclick="OpenScheduler" class="link">
+                                                                                @if (order.ScheduledDate is null) {
+                                                                                    <span>no date</span>
+                                                                                } else {
+                                                                                    <span>@DateTimeString((DateTime)order.ScheduledDate)</span>
+                                                                                }
+                                                                            </span>
+                                                                        </Template>
+                                                                    </RadzenDataGridColumn>
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false">
+                                                                        <Template Context="order">
+                                                                            <RadzenButton ButtonStyle="ButtonStyle.Secondary">Complete</RadzenButton>
+                                                                        </Template>
+                                                                    </RadzenDataGridColumn>
+                                                                </Columns>
+                                                            </RadzenDataGrid>
+                                                        </ChildContent>
 
-                                                <SummaryTemplate>
-                                                    <RadzenCard class="mt-3">
-                                                        <b>@("Late Order".ToQuantity(_selectedProductWorkOrders.Where(o => o.Status.Equals("InProgress") && o.ScheduledDate < DateTime.Today).Count()))</b>
-                                                    </RadzenCard>
-                                                </SummaryTemplate>
-                                            </RadzenPanel>
-                                        }
+                                                        <SummaryTemplate>
+                                                            <RadzenCard class="mt-3">
+                                                                <b>@("Late Order".ToQuantity(_selectedProductWorkOrders.Where(o => o.Status.Equals("InProgress") && o.ScheduledDate < DateTime.Today).Count()))</b>
+                                                            </RadzenCard>
+                                                        </SummaryTemplate>
+                                                    </RadzenPanel>
+                                                }
 
-                                        <!-- Unscheduled Orders -->
-                                        @if (_selectedProductWorkOrders.Where(o => o.ScheduledDate is null).Any()) {
-                                            <RadzenPanel AllowCollapse="true" Style="margin: 40px auto;">
-                                                <HeaderTemplate>
-                                                    <h4 class="m-0 d-flex align-items-center">
-                                                        <RadzenIcon Icon="alarm" IconStyle="IconStyle.Warning" Class="mr-1" /><b>Unscheduled</b>
-                                                    </h4>
-                                                </HeaderTemplate>
+                                                <!-- Unscheduled Orders -->
+                                                @if (_selectedProductWorkOrders.Where(o => o.ScheduledDate is null).Any()) {
+                                                    <RadzenPanel AllowCollapse="true" Style="margin: 40px auto;">
+                                                        <HeaderTemplate>
+                                                            <h4 class="m-0 d-flex align-items-center">
+                                                                <RadzenIcon Icon="alarm" IconStyle="IconStyle.Warning" Class="mr-1" /><b>Unscheduled</b>
+                                                            </h4>
+                                                        </HeaderTemplate>
 
-                                                <ChildContent>
-                                                    <RadzenDataGrid Class="mt-3" TItem="WorkOrder" Data="@_selectedProductWorkOrders.Where(o => o.ScheduledDate is null)" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
-                                                        <Columns>
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Number" Title="Number" />
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Name" Title="Name" />
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="CustomerName" Title="Customer" />
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="VendorName" Title="Vendor" />
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Quantity" Title="Qty" />
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false">
-                                                                <Template Context="order">
-                                                                    <RadzenButton>Schedule</RadzenButton>
-                                                                </Template>
-                                                            </RadzenDataGridColumn>
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false">
-                                                                <Template Context="order">
-                                                                    <RadzenButton>Complete</RadzenButton>
-                                                                </Template>
-                                                            </RadzenDataGridColumn>
-                                                        </Columns>
-                                                    </RadzenDataGrid>
-                                                </ChildContent>
+                                                        <ChildContent>
+                                                            <RadzenDataGrid Class="mt-3" TItem="WorkOrder" Data="@_selectedProductWorkOrders.Where(o => o.ScheduledDate is null)" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
+                                                                <Columns>
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Number" Title="Number" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Name" Title="Name" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="CustomerName" Title="Customer" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="VendorName" Title="Vendor" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Quantity" Title="Qty" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false">
+                                                                        <Template Context="order">
+                                                                            <RadzenButton>Schedule</RadzenButton>
+                                                                        </Template>
+                                                                    </RadzenDataGridColumn>
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false">
+                                                                        <Template Context="order">
+                                                                            <RadzenButton ButtonStyle="ButtonStyle.Secondary">Complete</RadzenButton>
+                                                                        </Template>
+                                                                    </RadzenDataGridColumn>
+                                                                </Columns>
+                                                            </RadzenDataGrid>
+                                                        </ChildContent>
 
-                                                <SummaryTemplate>
-                                                    <RadzenCard class="mt-3">
-                                                        <b>@("Unscheduled Order".ToQuantity(_selectedProductWorkOrders.Where(o => o.ScheduledDate is null).Count()))</b>
-                                                    </RadzenCard>
-                                                </SummaryTemplate>
-                                            </RadzenPanel>
-                                        }
+                                                        <SummaryTemplate>
+                                                            <RadzenCard class="mt-3">
+                                                                <b>@("Unscheduled Order".ToQuantity(_selectedProductWorkOrders.Where(o => o.ScheduledDate is null).Count()))</b>
+                                                            </RadzenCard>
+                                                        </SummaryTemplate>
+                                                    </RadzenPanel>
+                                                }
 
-                                        @if (_selectedProductWorkOrders.Where(o => o.Status.Equals("InProgress")).Any()) {
+                                                @if (_selectedProductWorkOrders.Where(o => o.Status.Equals("InProgress")).Any()) {
 
-                                            <RadzenPanel AllowCollapse="true" Style="margin: 40px auto;">
-                                                <HeaderTemplate>
-                                                    <h4 class="m-0 d-flex align-items-center">
-                                                        <RadzenIcon Icon="alarm" IconStyle="IconStyle.Info" Class="mr-1" /><b>Scheduled</b>
-                                                    </h4>
-                                                </HeaderTemplate>
+                                                    <RadzenPanel AllowCollapse="true" Style="margin: 40px auto;">
+                                                        <HeaderTemplate>
+                                                            <h4 class="m-0 d-flex align-items-center">
+                                                                <RadzenIcon Icon="alarm" IconStyle="IconStyle.Info" Class="mr-1" /><b>Scheduled</b>
+                                                            </h4>
+                                                        </HeaderTemplate>
 
-                                                <ChildContent>
-                                                    <RadzenDataGrid Class="mt-3" TItem="WorkOrder" Data="@_selectedProductWorkOrders.Where(o => o.Status.Equals("InProgress"))" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
-                                                        <Columns>
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Number" Title="Number" />
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Name" Title="Name" />
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="CustomerName" Title="Customer" />
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="VendorName" Title="Vendor" />
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Quantity" Title="Qty" />
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Title="Scheduled" Property="ScheduledDate" Sortable="true">
-                                                                <Template Context="order">
-                                                                    <span @onclick="OpenScheduler" class="link">
-                                                                        @if (order.ScheduledDate is null) {
-                                                                            <span>no date</span>
-                                                                        } else {
-                                                                            <span>@DateTimeString((DateTime)order.ScheduledDate)</span>
-                                                                        }
-                                                                    </span>
-                                                                </Template>
-                                                            </RadzenDataGridColumn>
-                                                            <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false">
-                                                                <Template Context="order">
-                                                                    <RadzenButton>Complete</RadzenButton>
-                                                                </Template>
-                                                            </RadzenDataGridColumn>
-                                                        </Columns>
-                                                    </RadzenDataGrid>
-                                                </ChildContent>
+                                                        <ChildContent>
+                                                            <RadzenDataGrid Class="mt-3" TItem="WorkOrder" Data="@_selectedProductWorkOrders.Where(o => o.Status.Equals("InProgress"))" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
+                                                                <Columns>
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Number" Title="Number" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Name" Title="Name" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="CustomerName" Title="Customer" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="VendorName" Title="Vendor" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Quantity" Title="Qty" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Title="Scheduled" Property="ScheduledDate" Sortable="true">
+                                                                        <Template Context="order">
+                                                                            <span @onclick="OpenScheduler" class="link">
+                                                                                @if (order.ScheduledDate is null) {
+                                                                                    <span>no date</span>
+                                                                                } else {
+                                                                                    <span>@DateTimeString((DateTime)order.ScheduledDate)</span>
+                                                                                }
+                                                                            </span>
+                                                                        </Template>
+                                                                    </RadzenDataGridColumn>
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false">
+                                                                        <Template Context="order">
+                                                                            <RadzenButton ButtonStyle="ButtonStyle.Secondary">Complete</RadzenButton>
+                                                                        </Template>
+                                                                    </RadzenDataGridColumn>
+                                                                </Columns>
+                                                            </RadzenDataGrid>
+                                                        </ChildContent>
 
-                                                <SummaryTemplate>
-                                                    <RadzenCard class="mt-3">
-                                                        <b>@("Scheduled Order".ToQuantity(_selectedProductWorkOrders.Where(o => o.Status.Equals("InProgress")).Count()))</b>
-                                                    </RadzenCard>
-                                                </SummaryTemplate>
-                                            </RadzenPanel>
-                                        }
+                                                        <SummaryTemplate>
+                                                            <RadzenCard class="mt-3">
+                                                                <b>@("Scheduled Order".ToQuantity(_selectedProductWorkOrders.Where(o => o.Status.Equals("InProgress")).Count()))</b>
+                                                            </RadzenCard>
+                                                        </SummaryTemplate>
+                                                    </RadzenPanel>
+                                                }
 
-                                    </RadzenTabsItem>
+                                            </RadzenTabsItem>
                                 
-                                    <RadzenTabsItem Text="Not Released">
-                                        <RadzenDataGrid Class="mt-3" TItem="WorkOrder" Data="@_selectedProductWorkOrders.Where(o => o.Status.Equals("Pending"))" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
-                                            <Columns>
-                                                <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Number" Title="Number" />
-                                                <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Name" Title="Name" />
-                                                <RadzenDataGridColumn TItem="WorkOrder" Width="160px" Sortable="false" Filterable="false">
-                                                    <Template Context="order">
-                                                        <RadzenButton>Release</RadzenButton>
-                                                    </Template>
-                                                </RadzenDataGridColumn>
-                                            </Columns>
-                                        </RadzenDataGrid>
-                                    </RadzenTabsItem>
+                                            <RadzenTabsItem Text="Not Released">
+                                                <RadzenDataGrid Class="mt-3" TItem="WorkOrder" Data="@_selectedProductWorkOrders.Where(o => o.Status.Equals("Pending"))" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
+                                                    <Columns>
+                                                        <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Number" Title="Number" />
+                                                        <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Name" Title="Name" />
+                                                        <RadzenDataGridColumn TItem="WorkOrder" Width="160px" Sortable="false" Filterable="false">
+                                                            <Template Context="order">
+                                                                <RadzenButton ButtonStyle="ButtonStyle.Secondary">Release</RadzenButton>
+                                                            </Template>
+                                                        </RadzenDataGridColumn>
+                                                    </Columns>
+                                                </RadzenDataGrid>
+                                            </RadzenTabsItem>
 
-                                    <RadzenTabsItem Text="Fulfilled">
-                                    </RadzenTabsItem>
+                                            <RadzenTabsItem Text="Fulfilled">
+                                            </RadzenTabsItem>
 
-                                    <RadzenTabsItem Text="Canceled">
-                                    </RadzenTabsItem>
-                                </Tabs>
-                            </RadzenTabs>
+                                            <RadzenTabsItem Text="Canceled">
+                                            </RadzenTabsItem>
+                                        </Tabs>
+                                    </RadzenTabs>
                                 </div>
                             </div>
                         </div>
@@ -261,174 +261,6 @@
     protected override async Task OnInitializedAsync() {
 
         await LoadWorkOrders();
-
-        _workOrdersByProduct = new() {
-            {"Drawer Box", new() {
-
-                new() {
-                    Id = Guid.NewGuid(),
-                    SalesOrderId = Guid.NewGuid(),
-                    Name = "Pending Order C",
-                    Number = "000",
-                    Note = "This is a note",
-                    CustomerName = "Company A",
-                    VendorName = "Company B",
-                    ProductName = "Drawer Box",
-                    Quantity = 10,
-                    Status = "Pending",
-                    ReleasedDate = DateTime.Today,
-                    FulfilledDate = null,
-                    ScheduledDate = null
-                },
-
-                new() {
-                    Id = Guid.NewGuid(),
-                    SalesOrderId = Guid.NewGuid(),
-                    Name = "Scheduled Order A",
-                    Number = "000",
-                    Note = "This is a note",
-                    CustomerName = "Company A",
-                    VendorName = "Company B",
-                    ProductName = "Drawer Box",
-                    Quantity = 10,
-                    Status = "InProgress",
-                    ReleasedDate = DateTime.Today,
-                    FulfilledDate = DateTime.Today,
-                    ScheduledDate = DateTime.Today.AddDays(5)
-                },
-
-                new() {
-                    Id = Guid.NewGuid(),
-                    SalesOrderId = Guid.NewGuid(),
-                    Name = "Scheduled Order B",
-                    Number = "000",
-                    Note = "This is a note",
-                    CustomerName = "Company A",
-                    VendorName = "Company B",
-                    ProductName = "Drawer Box",
-                    Quantity = 10,
-                    Status = "InProgress",
-                    ReleasedDate = DateTime.Today,
-                    FulfilledDate = DateTime.Today,
-                    ScheduledDate = DateTime.Today.AddDays(3)
-                },
-
-                new() {
-                    Id = Guid.NewGuid(),
-                    SalesOrderId = Guid.NewGuid(),
-                    Name = "Scheduled Order C",
-                    Number = "000",
-                    Note = "This is a note",
-                    CustomerName = "Company A",
-                    VendorName = "Company B",
-                    ProductName = "Drawer Box",
-                    Quantity = 10,
-                    Status = "InProgress",
-                    ReleasedDate = DateTime.Today,
-                    FulfilledDate = DateTime.Today,
-                    ScheduledDate = DateTime.Today.AddDays(15)
-                },
-
-                new() {
-                    Id = Guid.NewGuid(),
-                    SalesOrderId = Guid.NewGuid(),
-                    Name = "Scheduled Order D",
-                    Number = "000",
-                    Note = "This is a note",
-                    CustomerName = "Company A",
-                    VendorName = "Company B",
-                    ProductName = "Drawer Box",
-                    Quantity = 10,
-                    Status = "InProgress",
-                    ReleasedDate = DateTime.Today,
-                    FulfilledDate = DateTime.Today,
-                    ScheduledDate = DateTime.Today.AddDays(1)
-                },
-
-                new() {
-                    Id = Guid.NewGuid(),
-                    SalesOrderId = Guid.NewGuid(),
-                    Name = "Future Order",
-                    Number = "000",
-                    Note = "This is a note",
-                    CustomerName = "Company A",
-                    VendorName = "Company B",
-                    ProductName = "Drawer Box",
-                    Quantity = 10,
-                    Status = "InProgress",
-                    ReleasedDate = DateTime.Today,
-                    FulfilledDate = DateTime.Today,
-                    ScheduledDate = DateTime.Today.AddDays(-15).AddYears(1)
-                },
-
-                new() {
-                    Id = Guid.NewGuid(),
-                    SalesOrderId = Guid.NewGuid(),
-                    Name = "Scheduled Order E",
-                    Number = "000",
-                    Note = "This is a note",
-                    CustomerName = "Company A",
-                    VendorName = "Company B",
-                    ProductName = "Drawer Box",
-                    Quantity = 10,
-                    Status = "InProgress",
-                    ReleasedDate = DateTime.Today,
-                    FulfilledDate = DateTime.Today,
-                    ScheduledDate = DateTime.Today
-                },
-
-                new() {
-                    Id = Guid.NewGuid(),
-                    SalesOrderId = Guid.NewGuid(),
-                    Name = "Late Order",
-                    Number = "000",
-                    Note = "This is a note",
-                    CustomerName = "Company A",
-                    VendorName = "Company B",
-                    ProductName = "Drawer Box",
-                    Quantity = 10,
-                    Status = "InProgress",
-                    ReleasedDate = DateTime.Today,
-                    FulfilledDate = null,
-                    ScheduledDate = DateTime.Today.AddDays(-1)
-                },
-
-                new() {
-                    Id = Guid.NewGuid(),
-                    SalesOrderId = Guid.NewGuid(),
-                    Name = "Pending Order  A",
-                    Number = "000",
-                    Note = "This is a note",
-                    CustomerName = "Company A",
-                    VendorName = "Company B",
-                    ProductName = "Drawer Box",
-                    Quantity = 10,
-                    Status = "Pending",
-                    ReleasedDate = DateTime.Today,
-                    FulfilledDate = DateTime.Today,
-                    ScheduledDate = null
-                },
-
-                new() {
-                    Id = Guid.NewGuid(),
-                    SalesOrderId = Guid.NewGuid(),
-                    Name = "Pending Order  B",
-                    Number = "000",
-                    Note = "This is a note",
-                    CustomerName = "Company A",
-                    VendorName = "Company B",
-                    ProductName = "Drawer Box",
-                    Quantity = 10,
-                    Status = "Pending",
-                    ReleasedDate = DateTime.Today,
-                    FulfilledDate = null,
-                    ScheduledDate = null
-                }
-
-            } },
-            {"MDF Door", new() },
-            {"Closet Part", new() }
-        };
 
     }
 

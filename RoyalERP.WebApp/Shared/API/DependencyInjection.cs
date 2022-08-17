@@ -11,9 +11,13 @@ public static class DependencyInjection {
 
         string host = configuration["Host"];
 
-        return services.AddScoped(s => RestService.For<IOrderAPI>(host))
+        return services.AddScoped<ICompanyAPI>(s => new ExampleCompanyData())
+                        .AddScoped<IOrderAPI>(s => new ExampleOrderData())
+                        .AddScoped<IWorkOrderAPI>(s => new ExampleWorkOrderData());
+
+        /*return services.AddScoped(s => RestService.For<IOrderAPI>(host))
                         .AddScoped(s => RestService.For<ICompanyAPI>(host))
-                        .AddScoped(s => RestService.For<IWorkOrderAPI>(host));
+                        .AddScoped(s => RestService.For<IWorkOrderAPI>(host));*/
 
     }
 
