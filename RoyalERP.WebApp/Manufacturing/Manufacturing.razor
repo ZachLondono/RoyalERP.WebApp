@@ -38,7 +38,7 @@
                         @{
                             bool isFirst = true;
                             foreach (string product in _workOrdersByProduct.Keys) {
-                                <RadzenTreeItem Text="@product" Selected="isFirst"></RadzenTreeItem>
+                                    <RadzenTreeItem Text="@product" Selected="isFirst"></RadzenTreeItem>
                                 isFirst = false;
                             }
                         }
@@ -91,7 +91,7 @@
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Quantity" Title="Qty" />
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Title="Scheduled" Property="ScheduledDate" Sortable="true">
                                                                         <Template Context="order">
-                                                                            <span @onclick="OpenScheduler" class="link">
+                                                                            <span @onclick="OpenScheduler" class="link" style="color:darkred; font-weight:bold;">
                                                                                 @if (order.ScheduledDate is null) {
                                                                                     <span>no date</span>
                                                                                 } else {
