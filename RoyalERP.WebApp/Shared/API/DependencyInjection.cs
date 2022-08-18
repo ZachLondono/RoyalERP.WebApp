@@ -2,6 +2,7 @@
 using Refit;
 using RoyalERP.WebApp.Shared.API.WorkOrders;
 using RoyalERP.WebApp.Shared.API.Companies;
+using RoyalERP.WebApp.Shared.API.Events;
 
 namespace RoyalERP.WebApp.Shared.API;
 
@@ -13,7 +14,8 @@ public static class DependencyInjection {
 
         return services.AddScoped<ICompanyAPI>(s => new ExampleCompanyData())
                         .AddScoped<IOrderAPI>(s => new ExampleOrderData())
-                        .AddScoped<IWorkOrderAPI>(s => new ExampleWorkOrderData());
+                        .AddScoped<IWorkOrderAPI>(s => new ExampleWorkOrderData())
+                        .AddScoped<IEventAPI>(s => new ExampleEventData());
 
         /*return services.AddScoped(s => RestService.For<IOrderAPI>(host))
                         .AddScoped(s => RestService.For<ICompanyAPI>(host))

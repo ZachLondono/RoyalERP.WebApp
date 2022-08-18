@@ -4,6 +4,7 @@
 @using System.Linq;
 @using System.Diagnostics
 @inject IWorkOrderAPI workorderApi
+@inject NotificationService notificationService
 
 <PageTitle>Manufacturing</PageTitle>
 
@@ -15,6 +16,16 @@
 
     .link:hover {
         color: darkblue;
+        text-decoration: underline;
+    }
+
+    .dangerlink {
+        cursor: pointer;
+        color:darkred;
+        font-weight:bold;
+    }
+
+    .dangerlink:hover {
         text-decoration: underline;
     }
 
@@ -38,7 +49,7 @@
                         @{
                             bool isFirst = true;
                             foreach (string product in _workOrdersByProduct.Keys) {
-                                    <RadzenTreeItem Text="@product" Selected="isFirst"></RadzenTreeItem>
+                                        <RadzenTreeItem Text="@product" Selected="isFirst"></RadzenTreeItem>
                                 isFirst = false;
                             }
                         }
@@ -86,12 +97,20 @@
                                                                 <Columns>
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Number" Title="Number" />
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Name" Title="Name" />
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="CustomerName" Title="Customer" />
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="VendorName" Title="Vendor" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="CustomerName" Title="Customer">
+                                                                        <Template Context="order">
+                                                                            <span class="link">@order.CustomerName</span>
+                                                                        </Template>
+                                                                    </RadzenDataGridColumn>
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="VendorName" Title="Vendor">
+                                                                        <Template Context="order">
+                                                                            <span class="link">@order.VendorName</span>
+                                                                        </Template>
+                                                                    </RadzenDataGridColumn>
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Quantity" Title="Qty" />
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Title="Scheduled" Property="ScheduledDate" Sortable="true">
                                                                         <Template Context="order">
-                                                                            <span @onclick="OpenScheduler" class="link" style="color:darkred; font-weight:bold;">
+                                                                            <span @onclick="OpenScheduler" class="dangerlink">
                                                                                 @if (order.ScheduledDate is null) {
                                                                                     <span>no date</span>
                                                                                 } else {
@@ -102,7 +121,7 @@
                                                                     </RadzenDataGridColumn>
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false">
                                                                         <Template Context="order">
-                                                                            <RadzenButton ButtonStyle="ButtonStyle.Secondary">Complete</RadzenButton>
+                                                                            <RadzenButton ButtonStyle="ButtonStyle.Secondary" Click="CompleteOrder">Complete</RadzenButton>
                                                                         </Template>
                                                                     </RadzenDataGridColumn>
                                                                 </Columns>
@@ -131,8 +150,16 @@
                                                                 <Columns>
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Number" Title="Number" />
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Name" Title="Name" />
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="CustomerName" Title="Customer" />
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="VendorName" Title="Vendor" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="CustomerName" Title="Customer">
+                                                                        <Template Context="order">
+                                                                            <span class="link">@order.CustomerName</span>
+                                                                        </Template>
+                                                                    </RadzenDataGridColumn>
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="VendorName" Title="Vendor">
+                                                                        <Template Context="order">
+                                                                            <span class="link">@order.VendorName</span>
+                                                                        </Template>
+                                                                    </RadzenDataGridColumn>
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Quantity" Title="Qty" />
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false">
                                                                         <Template Context="order">
@@ -141,7 +168,7 @@
                                                                     </RadzenDataGridColumn>
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false">
                                                                         <Template Context="order">
-                                                                            <RadzenButton ButtonStyle="ButtonStyle.Secondary">Complete</RadzenButton>
+                                                                            <RadzenButton ButtonStyle="ButtonStyle.Secondary" Click="CompleteOrder">Complete</RadzenButton>
                                                                         </Template>
                                                                     </RadzenDataGridColumn>
                                                                 </Columns>
@@ -170,8 +197,16 @@
                                                                 <Columns>
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Number" Title="Number" />
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Name" Title="Name" />
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="CustomerName" Title="Customer" />
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="VendorName" Title="Vendor" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="CustomerName" Title="Customer">
+                                                                        <Template Context="order">
+                                                                            <span class="link">@order.CustomerName</span>
+                                                                        </Template>
+                                                                    </RadzenDataGridColumn>
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="VendorName" Title="Vendor">
+                                                                        <Template Context="order">
+                                                                            <span class="link">@order.VendorName</span>
+                                                                        </Template>
+                                                                    </RadzenDataGridColumn>
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Quantity" Title="Qty" />
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Title="Scheduled" Property="ScheduledDate" Sortable="true">
                                                                         <Template Context="order">
@@ -186,7 +221,7 @@
                                                                     </RadzenDataGridColumn>
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false">
                                                                         <Template Context="order">
-                                                                            <RadzenButton ButtonStyle="ButtonStyle.Secondary">Complete</RadzenButton>
+                                                                            <RadzenButton ButtonStyle="ButtonStyle.Secondary" Click="CompleteOrder">Complete</RadzenButton>
                                                                         </Template>
                                                                     </RadzenDataGridColumn>
                                                                 </Columns>
@@ -210,7 +245,7 @@
                                                         <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Name" Title="Name" />
                                                         <RadzenDataGridColumn TItem="WorkOrder" Width="160px" Sortable="false" Filterable="false">
                                                             <Template Context="order">
-                                                                <RadzenButton ButtonStyle="ButtonStyle.Secondary">Release</RadzenButton>
+                                                                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Click="ReleaseOrder">Release</RadzenButton>
                                                             </Template>
                                                         </RadzenDataGridColumn>
                                                     </Columns>
@@ -281,12 +316,38 @@
         } finally {
             isLoading = false;
         }
-
     }
 
-    void OnProductSelect(TreeEventArgs args) {
+    private void OnProductSelect(TreeEventArgs args) {
         _selectedProductname = args.Text;
         _selectedProductWorkOrders = _workOrdersByProduct[args.Text];
+    }
+
+    private void CompleteOrder() {
+        notificationService.Notify(new NotificationMessage {
+            Severity = NotificationSeverity.Info,
+            Summary = "Updated",
+                Detail = "Work Order completed",
+            Duration = 4000 
+        });
+    }
+
+    private void ScheduleOrder() {
+        notificationService.Notify(new NotificationMessage {
+            Severity = NotificationSeverity.Info,
+            Summary = "Updated",
+            Detail = "Work Order scheduled",
+            Duration = 4000 
+        });
+    }
+
+    private void ReleaseOrder() {
+        notificationService.Notify(new NotificationMessage {
+            Severity = NotificationSeverity.Info,
+            Summary = "Updated",
+            Detail = "Work Order released",
+            Duration = 4000 
+        });
     }
 
     private void OpenScheduler() {

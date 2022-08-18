@@ -1,5 +1,5 @@
-﻿using RoyalERP.WebApp.Companies;
-using RoyalERP.WebApp.Shared.API.Companies;
+﻿using RoyalERP.WebApp.Shared.API.Companies;
+using RoyalERP.WebApp.Shared.API.Events;
 using RoyalERP.WebApp.Shared.API.Orders;
 using RoyalERP.WebApp.Shared.API.WorkOrders;
 
@@ -583,4 +583,47 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
 
     public Task<WorkOrder> GetById(Guid id) => Task.FromResult(_workOrders.Where(o => o.Id == id).First());
 
+}
+
+public class ExampleEventData : IEventAPI {
+
+    private List<Event> _events = new();
+
+    public ExampleEventData() {
+
+        _events.Add(new() {
+            Id = Guid.NewGuid(),
+            Summary = "Order OT000 was completed",
+            Timestamp = DateTime.Today.AddHours(-1.25),
+        });
+
+        _events.Add(new() {
+            Id = Guid.NewGuid(),
+            Summary = "Order OT000 was released",
+            Timestamp = DateTime.Today.AddHours(-1).AddDays(-1),
+        });
+
+        _events.Add(new() {
+            Id = Guid.NewGuid(),
+            Summary = "Order OT000 was confirmed",
+            Timestamp = DateTime.Today.AddHours(-1.25).AddDays(-1),
+        });
+
+        _events.Add(new() {
+            Id = Guid.NewGuid(),
+            Summary = "New order OT000 placed",
+            Timestamp = DateTime.Today.AddHours(-5.25).AddDays(-1),
+        });
+
+    }
+
+    public Task<IEnumerable<Event>> GetAll() => Task.FromResult(_events.AsEnumerable());
+
+    public Task<IEnumerable<Event>> GetByAggregateId(Guid AggregateId) {
+        throw new NotImplementedException();
+    }
+
+    public Task<Event> GetById(Guid Id) {
+        throw new NotImplementedException();
+    }
 }
