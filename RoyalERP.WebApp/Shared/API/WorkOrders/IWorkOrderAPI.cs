@@ -11,4 +11,7 @@ public interface IWorkOrderAPI {
     [Get("/workorders/{id}")]
     public Task<WorkOrder> GetById(Guid id);
 
+    [Get("/workorders?scheduleddate={date}")]
+    public Task<IEnumerable<WorkOrder>> GetAllScheduledOnDate(DateTime date);
+
 }

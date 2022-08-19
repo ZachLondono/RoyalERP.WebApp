@@ -581,6 +581,9 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
 
     public Task<IEnumerable<WorkOrder>> GetAll() => Task.FromResult(_workOrders.AsEnumerable());
 
+    public Task<IEnumerable<WorkOrder>> GetAllScheduledOnDate(DateTime date) =>
+        Task.FromResult(_workOrders.Take(new Random().Next(0, _workOrders.Count)));
+
     public Task<WorkOrder> GetById(Guid id) => Task.FromResult(_workOrders.Where(o => o.Id == id).First());
 
 }
