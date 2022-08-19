@@ -5,6 +5,7 @@
 @using System.Diagnostics
 @inject IWorkOrderAPI workorderApi
 @inject NotificationService notificationService
+@inject DialogService dialogService
 
 <PageTitle>Manufacturing</PageTitle>
 
@@ -81,7 +82,7 @@
                                 <div class="col">
                                     <RadzenTabs>
                                         <Tabs>
-                                    <RadzenTabsItem Text="Scheduler">
+                                            <RadzenTabsItem Text="Scheduler">
 
                                                 <!-- Late Orders -->
                                                 @if (_selectedProductWorkOrders.Where(o => o.Status.Equals("InProgress") && o.ScheduledDate < DateTime.Today).Any()) {
@@ -95,7 +96,7 @@
                                                         <ChildContent>
                                                             <RadzenDataGrid Class="mt-3" TItem="WorkOrder" Data="@_selectedProductWorkOrders.Where(o => o.Status.Equals("InProgress") && o.ScheduledDate < DateTime.Today)" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
                                                                 <Columns>
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Number" Title="Number" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Number" Title="Number" Width="75px" />
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Name" Title="Name" />
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="CustomerName" Title="Customer">
                                                                         <Template Context="order">
@@ -107,10 +108,10 @@
                                                                             <span class="link">@order.VendorName</span>
                                                                         </Template>
                                                                     </RadzenDataGridColumn>
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Quantity" Title="Qty" />
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Title="Scheduled" Property="ScheduledDate" Sortable="true">
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Quantity" Title="Qty" Width="50px"/>
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Title="Scheduled" Property="ScheduledDate" Sortable="true" Width="135px">
                                                                         <Template Context="order">
-                                                                            <span @onclick="OpenScheduler" class="dangerlink">
+                                                                            <span @onclick="async () => await OpenScheduler(order)" class=" dangerlink">
                                                                                 @if (order.ScheduledDate is null) {
                                                                                     <span>no date</span>
                                                                                 } else {
@@ -119,9 +120,9 @@
                                                                             </span>
                                                                         </Template>
                                                                     </RadzenDataGridColumn>
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false">
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false" Width="115px">
                                                                         <Template Context="order">
-                                                                            <RadzenButton ButtonStyle="ButtonStyle.Secondary" Click="CompleteOrder">Complete</RadzenButton>
+                                                                            <RadzenButton ButtonStyle="ButtonStyle.Secondary" Click="async () => await CompleteOrder(order)">Complete</RadzenButton>
                                                                         </Template>
                                                                     </RadzenDataGridColumn>
                                                                 </Columns>
@@ -148,7 +149,7 @@
                                                         <ChildContent>
                                                             <RadzenDataGrid Class="mt-3" TItem="WorkOrder" Data="@_selectedProductWorkOrders.Where(o => o.ScheduledDate is null)" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
                                                                 <Columns>
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Number" Title="Number" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Number" Title="Number" Width="75px" />
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Name" Title="Name" />
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="CustomerName" Title="Customer">
                                                                         <Template Context="order">
@@ -160,15 +161,15 @@
                                                                             <span class="link">@order.VendorName</span>
                                                                         </Template>
                                                                     </RadzenDataGridColumn>
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Quantity" Title="Qty" />
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false">
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Quantity" Title="Qty" Width="50px"/>
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false" Width="115px">
                                                                         <Template Context="order">
-                                                                            <RadzenButton>Schedule</RadzenButton>
+                                                                            <RadzenButton ButtonStyle="ButtonStyle.Primary" Click="async () => await OpenScheduler(order)">Schedule</RadzenButton>
                                                                         </Template>
                                                                     </RadzenDataGridColumn>
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false">
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false" Width="115px">
                                                                         <Template Context="order">
-                                                                            <RadzenButton ButtonStyle="ButtonStyle.Secondary" Click="CompleteOrder">Complete</RadzenButton>
+                                                                            <RadzenButton ButtonStyle="ButtonStyle.Secondary" Click="async () => await CompleteOrder(order)">Complete</RadzenButton>
                                                                         </Template>
                                                                     </RadzenDataGridColumn>
                                                                 </Columns>
@@ -195,8 +196,8 @@
                                                         <ChildContent>
                                                             <RadzenDataGrid Class="mt-3" TItem="WorkOrder" Data="@_selectedProductWorkOrders.Where(o => o.Status.Equals("InProgress"))" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
                                                                 <Columns>
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Number" Title="Number" />
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Name" Title="Name" />
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Number" Title="Number" Width="75px"/>
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Name" Title="Name" Width="150px"/>
                                                                     <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="CustomerName" Title="Customer">
                                                                         <Template Context="order">
                                                                             <span class="link">@order.CustomerName</span>
@@ -207,10 +208,10 @@
                                                                             <span class="link">@order.VendorName</span>
                                                                         </Template>
                                                                     </RadzenDataGridColumn>
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Quantity" Title="Qty" />
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Title="Scheduled" Property="ScheduledDate" Sortable="true">
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Quantity" Title="Qty" Width="50px"/>
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Title="Scheduled" Property="ScheduledDate" Sortable="true" Width="135px">
                                                                         <Template Context="order">
-                                                                            <span @onclick="OpenScheduler" class="link">
+                                                                            <span @onclick="async () => await OpenScheduler(order)" class="link">
                                                                                 @if (order.ScheduledDate is null) {
                                                                                     <span>no date</span>
                                                                                 } else {
@@ -219,9 +220,9 @@
                                                                             </span>
                                                                         </Template>
                                                                     </RadzenDataGridColumn>
-                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false">
+                                                                    <RadzenDataGridColumn TItem="WorkOrder" Sortable="false" Filterable="false" Width="115px">
                                                                         <Template Context="order">
-                                                                            <RadzenButton ButtonStyle="ButtonStyle.Secondary" Click="CompleteOrder">Complete</RadzenButton>
+                                                                            <RadzenButton ButtonStyle="ButtonStyle.Secondary" Click="async () => await CompleteOrder(order)">Complete</RadzenButton>
                                                                         </Template>
                                                                     </RadzenDataGridColumn>
                                                                 </Columns>
@@ -236,16 +237,16 @@
                                                     </RadzenPanel>
                                                 }
 
-                                            </RadzenTabsItem>
+                                             </RadzenTabsItem>
                                 
                                             <RadzenTabsItem Text="Not Released">
                                                 <RadzenDataGrid Class="mt-3" TItem="WorkOrder" Data="@_selectedProductWorkOrders.Where(o => o.Status.Equals("Pending"))" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
                                                     <Columns>
                                                         <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Number" Title="Number" />
                                                         <RadzenDataGridColumn TItem="WorkOrder" Sortable="true" Property="Name" Title="Name" />
-                                                        <RadzenDataGridColumn TItem="WorkOrder" Width="160px" Sortable="false" Filterable="false">
+                                                        <RadzenDataGridColumn TItem="WorkOrder" Width="115px" Sortable="false" Filterable="false">
                                                             <Template Context="order">
-                                                                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Click="ReleaseOrder">Release</RadzenButton>
+                                                                <RadzenButton ButtonStyle="ButtonStyle.Secondary" Click="async () => await ReleaseOrder(order)">Release</RadzenButton>
                                                             </Template>
                                                         </RadzenDataGridColumn>
                                                     </Columns>
@@ -323,25 +324,25 @@
         _selectedProductWorkOrders = _workOrdersByProduct[args.Text];
     }
 
-    private void CompleteOrder() {
+    private async Task CompleteOrder(WorkOrder order) {
+
+        var result = await dialogService.Confirm($"Are you sure you want to complete order {order.Number}", $"Complete {order.Number}", new ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" });
+        if (result is null || ((bool)result == false)) return;
+
         notificationService.Notify(new NotificationMessage {
             Severity = NotificationSeverity.Info,
             Summary = "Updated",
                 Detail = "Work Order completed",
             Duration = 4000 
         });
+
     }
 
-    private void ScheduleOrder() {
-        notificationService.Notify(new NotificationMessage {
-            Severity = NotificationSeverity.Info,
-            Summary = "Updated",
-            Detail = "Work Order scheduled",
-            Duration = 4000 
-        });
-    }
+    private async Task ReleaseOrder(WorkOrder order) {
 
-    private void ReleaseOrder() {
+        var result = await dialogService.Confirm($"Are you sure you want to release order {order.Number}", $"Release {order.Number}", new ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" });
+        if (result is null || ((bool)result == false)) return;
+
         notificationService.Notify(new NotificationMessage {
             Severity = NotificationSeverity.Info,
             Summary = "Updated",
@@ -350,8 +351,12 @@
         });
     }
 
-    private void OpenScheduler() {
-        Debug.WriteLine("Hello World");
+    private async Task OpenScheduler(WorkOrder order) {
+
+        await dialogService.OpenAsync<SchedulerDialog>($"Order {order.Number} - {order.Quantity} {order.ProductName.Pluralize(false)}",
+               new Dictionary<string, object>() { { "OrderId", order.Id } },
+               new DialogOptions() { Width = "770px", Height = "415px", Resizable = true, Draggable = true });
+
     }
 
     private string DateTimeString(DateTime date) {
