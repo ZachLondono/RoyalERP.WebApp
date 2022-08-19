@@ -1,0 +1,106 @@
+﻿@page "/scheduler/{OrderId}"
+@using RoyalERP.WebApp.Shared.API.WorkOrders
+@inject NotificationService notificationService
+@inject DialogService dialogService;
+@inject IWorkOrderAPI workorderApi;
+
+<div class="container">
+    <div class="row">
+
+        <div class="col">
+            <RadzenDatePicker TValue="DateTime?" Inline="true" Change="@OnChange" />
+        </div>
+
+        <div class="col">
+            <div class="container justify-content-center">
+
+                <h4 class="row justify-content-center">@selectedDateStr</h4>
+
+                <RadzenButton Text="Schedule"
+                            Class="row m-3"
+                            ButtonStyle="ButtonStyle.Primary"
+                            IsBusy=_isBusy
+                            Disabled="!_dateSelected"
+                            Click=@(async () => await ScheduleOrder()) />
+
+                <div class="row">
+                    @if (_dateSelected) {
+                        <div style="overflow:auto;height:200px;">
+                            <table class="table table-striped">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>Qty</th>
+                                        <th>Num</th>
+                                        <th>Name</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    @foreach(var order in workOrdersOnDay) {
+
+                                        <tr>
+                                            <td>@order.Quantity</td>
+                                            <td>@order.Number</td>
+                                            <td>@order.Name</td>
+                                        </tr>
+
+                                    }
+
+                                </tbody>
+
+                            </table>
+                        </div>
+                        <span>Total on Day: <b>@workOrdersOnDay.Sum(o => o.Quantity)</b></span>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public Guid OrderId { get; set; }
+
+    const string format = "MM/dd/yyyy";
+    string selectedDateStr = "Select Date";
+    DateTime selectedDate = DateTime.Today;
+    bool _dateSelected = false;
+    bool _isBusy = false;
+
+    private List<WorkOrder> workOrdersOnDay = new();
+
+    private async Task OnChange(DateTime? value) {
+        if (value is null) return;
+        selectedDate = (DateTime) value;
+        selectedDateStr = selectedDate.ToString(format) ?? "";
+        _dateSelected = true;
+        var orders = await workorderApi.GetAllScheduledOnDate(selectedDate);
+        workOrdersOnDay = new(orders);
+    }
+
+    private async Task ScheduleOrder() {
+        _isBusy = true;
+        await Task.Delay(750);
+        // TODO: verify change was made
+        //var response = await workorderApi.ScheduleOrder(OrderId, new() {
+        //        ScheduledDate = (DateTime)selectedDate
+        //    });
+        _isBusy = false;
+        dialogService.Close((DateTime)selectedDate);
+
+        notificationService.Notify(new NotificationMessage {
+                Severity = NotificationSeverity.Info,
+                Summary = "Updated",
+                Detail = "Work Order scheduled",
+                Duration = 4000
+            });
+    }
+
+}
