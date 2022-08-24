@@ -1,9 +1,11 @@
 ﻿@page "/manufacturing"
 @using Humanizer
+@using RoyalERP.WebApp.Shared.API.ProductClasses
 @using RoyalERP.WebApp.Shared.API.WorkOrders
 @using System.Linq;
 @using System.Diagnostics
 @inject IWorkOrderAPI workorderApi
+@inject IProductClassAPI productclassApi
 @inject NotificationService notificationService
 @inject DialogService dialogService
 
@@ -36,7 +38,7 @@
     <p>Loading...</p>
 } else {
 
-    if (_workOrdersByProduct.Count == 0) {
+    if (_workOrdersByProductClass.Count == 0) {
         <p>No orders to show</p>
     } else {
         
@@ -49,8 +51,8 @@
                     <RadzenTree Change=@OnProductSelect>
                         @{
                             bool isFirst = true;
-                            foreach (string product in _workOrdersByProduct.Keys) {
-                                        <RadzenTreeItem Text="@product" Selected="isFirst"></RadzenTreeItem>
+                            foreach (ProductClass prodclass in _workOrdersByProductClass.Keys) {
+                                <RadzenTreeItem Value="prodclass" Text="@prodclass.Name" Selected="isFirst"></RadzenTreeItem>
                                 isFirst = false;
                             }
                         }
@@ -289,7 +291,7 @@
     Exception? exception = default;
     bool showDetailedError = false;
 
-    private Dictionary<string, List<WorkOrder>> _workOrdersByProduct = new();
+    private Dictionary<ProductClass, List<WorkOrder>> _workOrdersByProductClass = new();
 
     private string _selectedProductname = "";
     private List<WorkOrder> _selectedProductWorkOrders = new();
@@ -306,8 +308,16 @@
             isLoading = true;
             IEnumerable<WorkOrder> workOrders = await workorderApi.GetAll();
 
-            _workOrdersByProduct = workOrders.GroupBy(o => o.ProductName)
-                                                .ToDictionary(g => g.Key, g => g.ToList());
+            var classes = workOrders.Select(o => o.ProductClass).Distinct();
+
+            foreach (var classId in classes) {
+
+                var product = await productclassApi.GetById(classId);
+                if (product is null) continue;
+
+                _workOrdersByProductClass[product] = workOrders.Where(o => o.ProductClass == classId).ToList();
+
+            }
 
             errorMsg = "";
 
@@ -321,7 +331,7 @@
 
     private void OnProductSelect(TreeEventArgs args) {
         _selectedProductname = args.Text;
-        _selectedProductWorkOrders = _workOrdersByProduct[args.Text];
+        _selectedProductWorkOrders = _workOrdersByProductClass[(ProductClass) args.Value];
     }
 
     private async Task CompleteOrder(WorkOrder order) {
@@ -353,7 +363,9 @@
 
     private async Task OpenScheduler(WorkOrder order) {
 
-        await dialogService.OpenAsync<SchedulerDialog>($"Order {order.Number} - {order.Quantity} {order.ProductName.Pluralize(false)}",
+        var prodClass = await productclassApi.GetById(order.ProductClass) ?? new();
+
+        await dialogService.OpenAsync<SchedulerDialog>($"Order {order.Number} - {order.Quantity} {prodClass.Name.Pluralize(false)}",
                new Dictionary<string, object>() { { "OrderId", order.Id } },
                new DialogOptions() { Width = "770px", Height = "415px", Resizable = true, Draggable = true });
 
