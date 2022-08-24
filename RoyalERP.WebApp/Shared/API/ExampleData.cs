@@ -1,6 +1,8 @@
 ﻿using RoyalERP.WebApp.Shared.API.Companies;
 using RoyalERP.WebApp.Shared.API.Events;
 using RoyalERP.WebApp.Shared.API.Orders;
+using RoyalERP.WebApp.Shared.API.ProductClasses;
+using RoyalERP.WebApp.Shared.API.Products;
 using RoyalERP.WebApp.Shared.API.WorkOrders;
 
 namespace RoyalERP.WebApp.Shared.API;
@@ -84,6 +86,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
 
         _workOrders = new();
 
+        Guid drawerBoxId = ExampleProductClassData.DovetailId;
         var dbOrders = new List<WorkOrder>() { 
                 new() {
                     Id = Guid.NewGuid(),
@@ -93,7 +96,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Drawer Box",
+                    ProductClass = drawerBoxId,
                     Quantity = 10,
                     Status = "Pending",
                     ReleasedDate = DateTime.Today,
@@ -109,7 +112,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Drawer Box",
+                    ProductClass = drawerBoxId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -125,7 +128,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Drawer Box",
+                    ProductClass = drawerBoxId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -141,7 +144,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Drawer Box",
+                    ProductClass = drawerBoxId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -157,7 +160,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Drawer Box",
+                    ProductClass = drawerBoxId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -173,7 +176,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Drawer Box",
+                    ProductClass = drawerBoxId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -189,7 +192,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Drawer Box",
+                    ProductClass = drawerBoxId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -205,7 +208,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Drawer Box",
+                    ProductClass = drawerBoxId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -221,7 +224,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Drawer Box",
+                    ProductClass = drawerBoxId,
                     Quantity = 10,
                     Status = "Pending",
                     ReleasedDate = DateTime.Today,
@@ -237,7 +240,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Drawer Box",
+                    ProductClass = drawerBoxId,
                     Quantity = 10,
                     Status = "Pending",
                     ReleasedDate = DateTime.Today,
@@ -247,6 +250,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
 
             };
 
+        Guid doorClassId = ExampleProductClassData.MDFDoorId;
         var doorOrders = new List<WorkOrder>() {
                 new() {
                     Id = Guid.NewGuid(),
@@ -256,7 +260,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "MDF Door",
+                    ProductClass = doorClassId,
                     Quantity = 10,
                     Status = "Pending",
                     ReleasedDate = DateTime.Today,
@@ -272,7 +276,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "MDF Door",
+                    ProductClass = doorClassId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -288,7 +292,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "MDF Door",
+                    ProductClass = doorClassId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -304,7 +308,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "MDF Door",
+                    ProductClass = doorClassId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -320,7 +324,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "MDF Door",
+                    ProductClass = doorClassId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -336,7 +340,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "MDF Door",
+                    ProductClass = doorClassId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -352,7 +356,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "MDF Door",
+                    ProductClass = doorClassId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -368,7 +372,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "MDF Door",
+                    ProductClass = doorClassId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -384,7 +388,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "MDF Door",
+                    ProductClass = doorClassId,
                     Quantity = 10,
                     Status = "Pending",
                     ReleasedDate = DateTime.Today,
@@ -400,7 +404,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "MDF Door",
+                    ProductClass = doorClassId,
                     Quantity = 10,
                     Status = "Pending",
                     ReleasedDate = DateTime.Today,
@@ -410,6 +414,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
 
             };
 
+        Guid closetClassId = ExampleProductClassData.ClosetPartId;
         var closetOrders = new List<WorkOrder>() {
                 new() {
                     Id = Guid.NewGuid(),
@@ -419,7 +424,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Closet Part",
+                    ProductClass = closetClassId,
                     Quantity = 10,
                     Status = "Pending",
                     ReleasedDate = DateTime.Today,
@@ -435,7 +440,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Closet Part",
+                    ProductClass = closetClassId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -451,7 +456,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Closet Part",
+                    ProductClass = closetClassId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -467,7 +472,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Closet Part",
+                    ProductClass = closetClassId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -483,7 +488,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Closet Part",
+                    ProductClass = closetClassId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -499,7 +504,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Closet Part",
+                    ProductClass = closetClassId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -515,7 +520,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Closet Part",
+                    ProductClass = closetClassId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -531,7 +536,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Closet Part",
+                    ProductClass = closetClassId,
                     Quantity = 10,
                     Status = "InProgress",
                     ReleasedDate = DateTime.Today,
@@ -547,7 +552,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Closet Part",
+                    ProductClass = closetClassId,
                     Quantity = 10,
                     Status = "Pending",
                     ReleasedDate = DateTime.Today,
@@ -563,7 +568,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
                     Note = "This is a note",
                     CustomerName = "Company A",
                     VendorName = "Company B",
-                    ProductName = "Closet Part",
+                    ProductClass = closetClassId,
                     Quantity = 10,
                     Status = "Pending",
                     ReleasedDate = DateTime.Today,
@@ -590,7 +595,7 @@ public class ExampleWorkOrderData : IWorkOrderAPI {
 
 public class ExampleEventData : IEventAPI {
 
-    private List<Event> _events = new();
+    private readonly List<Event> _events = new();
 
     public ExampleEventData() {
 
@@ -629,4 +634,79 @@ public class ExampleEventData : IEventAPI {
     public Task<Event> GetById(Guid Id) {
         throw new NotImplementedException();
     }
+}
+
+public class ExampleProductData : IProductAPI {
+
+    public readonly static Guid DoorId = new("88E7E7EF-1C94-42B5-9373-E9E0C5E5C338");
+    public readonly static Guid DrawerBoxId = new("FB681987-45F7-42B7-A59B-83881CE338A3");
+    public readonly static Guid ClosetId = new("32D8B615-5D47-4946-A89F-F733455C74AD");
+
+    public readonly List<Product> _products;
+
+    public ExampleProductData() {
+
+        _products = new() {
+            new() {
+                Id = DoorId,
+                Name = "MDF Door",
+                ClassId = ExampleProductClassData.MDFDoorId,
+                Attributes = Enumerable.Empty<Guid>()
+            },
+            new() {
+                Id = DrawerBoxId,
+                Name = "Drawer Box",
+                ClassId = ExampleProductClassData.DovetailId,
+                Attributes = Enumerable.Empty<Guid>()
+            },
+            new() {
+                Id = ClosetId,
+                Name = "Closet Part",
+                ClassId = ExampleProductClassData.ClosetPartId,
+                Attributes = Enumerable.Empty<Guid>()
+            }
+        };
+
+    }
+
+    public Task<IEnumerable<Product>> GetAll() => Task.FromResult(_products.AsEnumerable());
+
+    public Task<Product?> GetById(Guid productid) => Task.FromResult(_products.Where(p => p.Id.Equals(productid)).FirstOrDefault());
+
+}
+
+public class ExampleProductClassData : IProductClassAPI {
+
+    private readonly List<ProductClass> _classes;
+
+    public readonly static Guid DovetailId = new("CB732FC8-340A-4E63-8F5B-5E229D3261C7");
+    public readonly static Guid ClosetPartId = new("CD3458F5-6F0C-414E-9972-0FB0FB120967");
+    public readonly static Guid MDFDoorId = new("CD3458F6-6F0C-414E-9972-0FB0FB120967");
+
+    public ExampleProductClassData() {
+
+        _classes = new() {
+
+            new() {
+                Id = DovetailId,
+                Name = "Dovetail Drawer Box"
+            },
+
+            new() {
+                Id = ClosetPartId,
+                Name = "Closet Part"
+            },
+
+            new() {
+                Id = MDFDoorId,
+                Name = "MDF Door"
+            }
+
+        };
+
+    }
+
+    public Task<IEnumerable<ProductClass>> GetAll() => Task.FromResult(_classes.AsEnumerable());
+
+    public Task<ProductClass?> GetById(Guid id) => Task.FromResult(_classes.Where(c => c.Id.Equals(id)).FirstOrDefault());
 }
