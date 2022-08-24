@@ -1,0 +1,134 @@
+﻿@page "/catalog"
+@using RoyalERP.WebApp.Shared.API.ProductAttributes
+@using RoyalERP.WebApp.Shared.API.ProductClasses
+@using RoyalERP.WebApp.Shared.API.Products
+@inject IProductAPI productApi
+@inject IProductClassAPI productclassApi
+@inject IProductAttributeAPI attributeApi
+
+@if(isLoading) {
+    <p>Loading...</p>
+} else {
+
+    <div class="container">
+
+        <RadzenTabs>
+            <Tabs>
+                <RadzenTabsItem Text="Products">
+                    <div class="row justify-content-end">
+                        <div class="col mb-2">
+                            <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Primary">+ Create Product</RadzenButton>
+                            <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Light">Export</RadzenButton>
+                            <RadzenButton ButtonStyle="ButtonStyle.Light">Upload</RadzenButton>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <RadzenDataGrid TItem="Product" Data="@_products" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@_selectedProducts>
+                                <Columns>
+                                    <RadzenDataGridColumn TItem="Product" Sortable="true" Property="Name" Title="Name" />
+                                </Columns>
+                            </RadzenDataGrid>
+                        </div>
+                        <div class="col">
+                            <RadzenCard>
+                                @if (_selectedProducts.Any()) {
+                                    var product = _selectedProducts.First();
+                                    <h3>@product.Name</h3>
+                                } else {
+                                    <span>Select product to edit</span>
+                                }
+                            </RadzenCard>
+                        </div>
+                    </div>
+                </RadzenTabsItem>
+                <RadzenTabsItem Text="Classes">
+                        <div class="row justify-content-end">
+                            <div class="col mb-2">
+                                <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Primary">+ Create Class</RadzenButton>
+                            <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Light">Export</RadzenButton>
+                            <RadzenButton ButtonStyle="ButtonStyle.Light">Upload</RadzenButton>
+                        </div>
+                        </div>
+                    <div class="row">
+                            <div class="col">
+                                <RadzenDataGrid TItem="ProductClass" Data="@_productClasses" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
+                                    <Columns>
+                                    <RadzenDataGridColumn TItem="ProductClass" Sortable="true" Property="Name" Title="Name" />
+                                    </Columns>
+                                </RadzenDataGrid>
+                            </div>
+                        </div>
+                </RadzenTabsItem>
+                <RadzenTabsItem Text="Attributes">
+                        <div class="row justify-content-end">
+                        <div class="col mb-2">
+                            <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Primary">+ Create Attribute</RadzenButton>
+                            <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Light">Export</RadzenButton>
+                        <RadzenButton ButtonStyle="ButtonStyle.Light">Upload</RadzenButton>
+                        </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <RadzenDataGrid TItem="ProductAttribute" Data="@_productAttributes" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
+                                    <Columns>
+                                    <RadzenDataGridColumn TItem="ProductAttribute" Sortable="true" Property="Name" Title="Name" />
+                                    </Columns>
+                                </RadzenDataGrid>
+                            </div>
+                        </div>
+                </RadzenTabsItem>
+            </Tabs>
+        </RadzenTabs>
+
+    </div>
+
+}
+
+@if (!string.IsNullOrEmpty(errorMsg)) {
+    <p style="color:red">@errorMsg</p>
+    @if (!showDetailedError) {
+        <button @onclick="ShowExceptionDetails">Details</button>
+    } else {
+        <p>@(exception?.ToString() ?? "no details.")</p>
+    }
+}
+
+@code {
+
+    bool isLoading = true;
+    string errorMsg = "";
+    Exception? exception = default;
+    bool showDetailedError = false;
+
+    private IList<Product> _selectedProducts = new List<Product>();
+    private List<Product> _products = new();
+    private List<ProductClass> _productClasses = new();
+    private List<ProductAttribute> _productAttributes = new();
+
+    protected override async Task OnInitializedAsync() {
+
+        await LoadData();
+
+    }
+
+    private async Task LoadData() {
+        try {
+
+            isLoading = true;
+            _products = new(await productApi.GetAll());
+            _productClasses = new(await productclassApi.GetAll());
+            _productAttributes = new(await attributeApi.GetAll());
+            errorMsg = "";
+
+        } catch (Exception ex) {
+            errorMsg = ex.Message;
+            exception = ex;
+        } finally {
+            isLoading = false;
+        }
+    }
+
+    private void ShowExceptionDetails() => showDetailedError = true;
+
+}
