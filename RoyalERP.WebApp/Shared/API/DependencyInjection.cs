@@ -5,6 +5,7 @@ using RoyalERP.WebApp.Shared.API.Companies;
 using RoyalERP.WebApp.Shared.API.Events;
 using RoyalERP.WebApp.Shared.API.Products;
 using RoyalERP.WebApp.Shared.API.ProductClasses;
+using RoyalERP.WebApp.Shared.API.ProductAttributes;
 
 namespace RoyalERP.WebApp.Shared.API;
 
@@ -19,7 +20,8 @@ public static class DependencyInjection {
                         .AddScoped<IWorkOrderAPI>(s => new ExampleWorkOrderData())
                         .AddScoped<IEventAPI>(s => new ExampleEventData())
                         .AddScoped<IProductAPI>(s => new ExampleProductData())
-                        .AddScoped<IProductClassAPI>(s => new ExampleProductClassData());
+                        .AddScoped<IProductClassAPI>(s => new ExampleProductClassData())
+                        .AddScoped<IProductAttributeAPI>(s => new ExampleProductAttributeData());
 
         /*return services.AddScoped(s => RestService.For<IOrderAPI>(host))
                         .AddScoped(s => RestService.For<ICompanyAPI>(host))

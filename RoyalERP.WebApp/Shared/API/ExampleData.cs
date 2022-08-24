@@ -1,6 +1,7 @@
 ﻿using RoyalERP.WebApp.Shared.API.Companies;
 using RoyalERP.WebApp.Shared.API.Events;
 using RoyalERP.WebApp.Shared.API.Orders;
+using RoyalERP.WebApp.Shared.API.ProductAttributes;
 using RoyalERP.WebApp.Shared.API.ProductClasses;
 using RoyalERP.WebApp.Shared.API.Products;
 using RoyalERP.WebApp.Shared.API.WorkOrders;
@@ -709,4 +710,35 @@ public class ExampleProductClassData : IProductClassAPI {
     public Task<IEnumerable<ProductClass>> GetAll() => Task.FromResult(_classes.AsEnumerable());
 
     public Task<ProductClass?> GetById(Guid id) => Task.FromResult(_classes.Where(c => c.Id.Equals(id)).FirstOrDefault());
+}
+
+public class ExampleProductAttributeData : IProductAttributeAPI {
+
+    private readonly List<ProductAttribute> _attributes;
+
+    public ExampleProductAttributeData() {
+
+        _attributes = new();
+        
+        _attributes.Add(new() {
+            Id = Guid.NewGuid(),
+            Name = "Material"
+        });
+
+        _attributes.Add(new() {
+            Id = Guid.NewGuid(),
+            Name = "Box Material"
+        });
+
+        _attributes.Add(new() {
+            Id = Guid.NewGuid(),
+            Name = "Bottom Material"
+        });
+
+    }
+
+    public Task<IEnumerable<ProductAttribute>> GetAll() => Task.FromResult(_attributes.AsEnumerable());
+
+    public Task<ProductAttribute?> GetById(Guid id) => Task.FromResult(_attributes.Where(a => a.Id.Equals(id)).FirstOrDefault());
+
 }
