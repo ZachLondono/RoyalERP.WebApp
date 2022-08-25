@@ -4,6 +4,12 @@
 
 <PageTitle>Companies</PageTitle>
 
+<style>
+    form .row {
+        margin-bottom: 16px;
+    }
+</style>
+
 <div class="container">
 
     <div class="row justify-content-end">
@@ -22,22 +28,132 @@
 
     <div class="row">
         <div class="col">
-            <RadzenDataGrid TItem="Company" Data="@_companies" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
+            <RadzenDataGrid TItem="Company" Data="@_companies" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@_selectedCompanies>
                 <Columns>
-                    <RadzenDataGridColumn TItem="Company" Sortable="true" Property="Name" Title="Number" />
-                    <RadzenDataGridColumn TItem="Company" Sortable="true" Property="Contact" Title="Contact" />
-                    <RadzenDataGridColumn TItem="Company" Sortable="true" Property="Email" Title="Email" />
-                    <RadzenDataGridColumn TItem="Company" Sortable="true" Property="Address.Line1" Title="Line 1" />
-                    <RadzenDataGridColumn TItem="Company" Sortable="true" Property="Address.Line2" Title="Line 2" />
-                    <RadzenDataGridColumn TItem="Company" Sortable="true" Property="Address.Line3" Title="Line 3" />
-                    <RadzenDataGridColumn TItem="Company" Sortable="true" Property="Address.City" Title="City" />
-                    <RadzenDataGridColumn TItem="Company" Sortable="true" Property="Address.State" Title="State" />
-                    <RadzenDataGridColumn TItem="Company" Sortable="true" Property="Address.Zip" Title="Zip" />
+                    <RadzenDataGridColumn TItem="Company" Sortable="true" Property="Name" Title="Name" />
                 </Columns>
             </RadzenDataGrid>
         </div>
+        <div class="col">
+            <RadzenCard>
+                @if (_selectedCompanies.Any()) {
+                    var company = _selectedCompanies.First();
+                    <RadzenTemplateForm Data="@company" TItem="Company">
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="row">
+                                    <div class="col-2 align-items-center d-flex">
+                                        <RadzenLabel Text="Name" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <RadzenTextBox style="width: 100%;" Name="Name" @bind-Value=company.Name />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-2 align-items-center d-flex">
+                                        <RadzenLabel Text="Contact" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <RadzenTextBox style="width: 100%;" Name="Contact" @bind-Value=company.Contact />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-2 align-items-center d-flex">
+                                        <RadzenLabel Text="Email" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <RadzenTextBox style="width: 100%;" Name="Email" @bind-Value=company.Email />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="row">
+                                    <RadzenButton Text="Save" ButtonStyle="ButtonStyle.Primary" Style="width: 100px;" Disabled="true"/>
+                                </div>
+                                <div class="row">
+                                    <RadzenButton Text="Defaults" ButtonStyle="ButtonStyle.Light" Style="width: 100px;" />
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <RadzenFieldset AllowCollapse="true">
+
+                            <HeaderTemplate>
+                                <span class="d-inline-flex align-items-center align-middle">
+                                    <RadzenIcon Icon="markunread_mailbox" Class="mr-1" /><b>Address</b>
+                                </span>
+                            </HeaderTemplate>
+
+                            <ChildContent>
+                                <div class="row">
+                                    <div class="col-2 align-items-center d-flex">
+                                        <RadzenLabel Text="Line 1" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <RadzenTextBox style="width: 100%;" Name="Line1" @bind-Value=company.Address.Line1 />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-2 align-items-center d-flex">
+                                        <RadzenLabel Text="Line 2" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <RadzenTextBox style="width: 100%;" Name="Line2" @bind-Value=company.Address.Line2 />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-2 align-items-center d-flex">
+                                        <RadzenLabel Text="Line 3" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <RadzenTextBox style="width: 100%;" Name="Line3" @bind-Value=company.Address.Line3 />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-2 align-items-center d-flex">
+                                        <RadzenLabel Text="City" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <RadzenTextBox style="width: 100%;" Name="City" @bind-Value=company.Address.City />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-2 align-items-center d-flex">
+                                        <RadzenLabel Text="State" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <RadzenTextBox style="width: 100%;" Name="State" @bind-Value=company.Address.State />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-2 align-items-center d-flex">
+                                        <RadzenLabel Text="Zip" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <RadzenTextBox style="width: 100%;" Name="Zip" @bind-Value=company.Address.Zip />
+                                    </div>
+                                </div>
+                            </ChildContent>
+
+                        </RadzenFieldset>
+
+                    </RadzenTemplateForm>
+
+                }
+            </RadzenCard>
+        </div>
     </div>
 </div>
+
 
 @if (!string.IsNullOrEmpty(errorMsg)) {
     <p style="color:red">@errorMsg</p>
@@ -55,6 +171,7 @@
     Exception? exception = default;
     bool showDetailedError = false;
 
+    private IList<Company> _selectedCompanies = new List<Company>();
     private List<Company> _companies = new();
 
     protected override async Task OnInitializedAsync() {
