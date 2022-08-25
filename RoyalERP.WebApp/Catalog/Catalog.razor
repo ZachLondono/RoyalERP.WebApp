@@ -6,6 +6,8 @@
 @inject IProductClassAPI productclassApi
 @inject IProductAttributeAPI attributeApi
 
+<PageTitle>Catalog</PageTitle>
+
 @if(isLoading) {
     <p>Loading...</p>
 } else {
@@ -109,6 +111,9 @@
     protected override async Task OnInitializedAsync() {
 
         await LoadData();
+
+        if (_products.Any())
+            _selectedProducts.Add(_products.First());
 
     }
 
