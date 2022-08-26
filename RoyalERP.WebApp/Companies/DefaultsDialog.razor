@@ -6,6 +6,19 @@
 @inject IProductAPI productApi
 @inject IProductAttributeAPI attributeApi
 
+<style>
+
+    .new-product-defaults {
+
+        padding: 10px;
+        background-color: #F9F9F9;
+        border: 1px solid #E0E1E4;
+        border-radius: 4px;
+
+    }
+
+</style>
+
 @if (_company is null) {
 
     <span>Loading...</span>
@@ -15,13 +28,9 @@
     <div class="container">
 
         <div class="row">
-            <h3>@_company.Name</h3>
-        </div>
-
-        <div class="row">
             @foreach (var product in _defaultsByProduct.Keys) {
 
-                <RadzenFieldset AllowCollapse="true" Class="mb-3">
+                <RadzenFieldset AllowCollapse="true" Class="mb-3" Style="background-color:#F9F9F9;">
 
                     <HeaderTemplate>
                         <span class="d-inline-flex align-items-center align-middle">
@@ -35,25 +44,28 @@
 
                             @foreach(var defaultConfig in _defaultsByProduct[product]) {
                                 <div class="row">
-                                    <div class="col-2">
+                                    <div class="col-2 align-items-center d-flex">
                                         <RadzenLabel Text="@defaultConfig.AttributeName" />
                                     </div>
                                     <div class="col">
                                         <RadzenTextBox Style="width:100%" @bind-Value="defaultConfig.DefaultValue" />
+                                    </div>
+                                    <div class="col-1">
+                                        <RadzenButton Text="X" ButtonStyle="ButtonStyle.Danger" />
                                     </div>
                                 </div>
                             }
 
                         </div>
 
-                        <div class="row mt-2 justify-content-center">
+                        <div class="row mt-4 justify-content-center">
 
-                            <div class="col-4">
+                            <div class="col-4 d-flex">
                                 <!-- Select all attributes from the attributesByProducts where the attribute id is not in the defaultsByProducts  -->
                                 <RadzenDropDown Style="width:100%" AllowClear="true" TValue="ProductAttribute" TextProperty="Name" Placeholder="Select Attribute" Data="@( _attributesByProducts[product].Where(a => !_defaultsByProduct[product].Any(d => d.AttributeId.Equals(a.Id)) ) )" />
                             </div>
-                            <div class="col-2">
-                                <RadzenButton Text="Add" />
+                            <div class="col-2 d-flex">
+                                <RadzenButton Text="Add" ButtonStyle="ButtonStyle.Secondary" />
                             </div>
 
                         </div>
@@ -65,13 +77,13 @@
             }
         </div>
 
-        <div class="row justify-content-center">
+        <div class="row justify-content-center new-product-defaults">
 
-            <div class="col-4">
+            <div class="col-4 d-flex">
                 <RadzenDropDown Style="width:100%" AllowClear="true" TValue="Product" TextProperty="Name" Placeholder="Select Product" Data="@(_attributesByProducts.Keys.Where(p => !_defaultsByProduct.ContainsKey(p)))" />
             </div>
-            <div class="col-2">
-                <RadzenButton Text="Add" />
+            <div class="col-2 d-flex">
+                <RadzenButton Text="Add" ButtonStyle="ButtonStyle.Secondary" />
             </div>
 
         </div>

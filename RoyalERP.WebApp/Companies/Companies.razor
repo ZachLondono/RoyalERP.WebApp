@@ -1,6 +1,7 @@
 ﻿@page "/companies"
 @using RoyalERP.WebApp.Shared.API.Companies
 @inject ICompanyAPI companyAPI;
+@inject DialogService dialogService;
 
 <PageTitle>Companies</PageTitle>
 
@@ -27,7 +28,7 @@
     </div>
 
     <div class="row">
-        <div class="col">
+        <div class="col-3">
             <RadzenDataGrid TItem="Company" Data="@_companies" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@_selectedCompanies>
                 <Columns>
                     <RadzenDataGridColumn TItem="Company" Sortable="true" Property="Name" Title="Name" />
@@ -46,7 +47,7 @@
                                     <div class="col-2 align-items-center d-flex">
                                         <RadzenLabel Text="Name" />
                                     </div>
-                                    <div class="col-md-8">
+                                    <div class="col">
                                         <RadzenTextBox style="width: 100%;" Name="Name" @bind-Value=company.Name />
                                     </div>
                                 </div>
@@ -55,7 +56,7 @@
                                     <div class="col-2 align-items-center d-flex">
                                         <RadzenLabel Text="Contact" />
                                     </div>
-                                    <div class="col-md-8">
+                                    <div class="col">
                                         <RadzenTextBox style="width: 100%;" Name="Contact" @bind-Value=company.Contact />
                                     </div>
                                 </div>
@@ -64,17 +65,17 @@
                                     <div class="col-2 align-items-center d-flex">
                                         <RadzenLabel Text="Email" />
                                     </div>
-                                    <div class="col-md-8">
+                                    <div class="col">
                                         <RadzenTextBox style="width: 100%;" Name="Email" @bind-Value=company.Email />
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-4">
-                                <div class="row">
+                            <div class="col-3">
+                                <div class="row justify-content-center">
                                     <RadzenButton Text="Save" ButtonStyle="ButtonStyle.Primary" Style="width: 100px;" Disabled="true"/>
                                 </div>
-                                <div class="row">
-                                    <RadzenButton Text="Defaults" ButtonStyle="ButtonStyle.Light" Style="width: 100px;" />
+                                <div class="row justify-content-center">
+                                    <RadzenButton Text="Defaults" ButtonStyle="ButtonStyle.Light" Style="width: 100px;" Click="OpenDefaultsDialog" />
                                 </div>
                             </div>
                         </div>
@@ -93,7 +94,7 @@
                                     <div class="col-2 align-items-center d-flex">
                                         <RadzenLabel Text="Line 1" />
                                     </div>
-                                    <div class="col-md-8">
+                                    <div class="col">
                                         <RadzenTextBox style="width: 100%;" Name="Line1" @bind-Value=company.Address.Line1 />
                                     </div>
                                 </div>
@@ -102,7 +103,7 @@
                                     <div class="col-2 align-items-center d-flex">
                                         <RadzenLabel Text="Line 2" />
                                     </div>
-                                    <div class="col-md-8">
+                                    <div class="col">
                                         <RadzenTextBox style="width: 100%;" Name="Line2" @bind-Value=company.Address.Line2 />
                                     </div>
                                 </div>
@@ -111,7 +112,7 @@
                                     <div class="col-2 align-items-center d-flex">
                                         <RadzenLabel Text="Line 3" />
                                     </div>
-                                    <div class="col-md-8">
+                                    <div class="col">
                                         <RadzenTextBox style="width: 100%;" Name="Line3" @bind-Value=company.Address.Line3 />
                                     </div>
                                 </div>
@@ -120,7 +121,7 @@
                                     <div class="col-2 align-items-center d-flex">
                                         <RadzenLabel Text="City" />
                                     </div>
-                                    <div class="col-md-8">
+                                    <div class="col">
                                         <RadzenTextBox style="width: 100%;" Name="City" @bind-Value=company.Address.City />
                                     </div>
                                 </div>
@@ -129,7 +130,7 @@
                                     <div class="col-2 align-items-center d-flex">
                                         <RadzenLabel Text="State" />
                                     </div>
-                                    <div class="col-md-8">
+                                    <div class="col">
                                         <RadzenTextBox style="width: 100%;" Name="State" @bind-Value=company.Address.State />
                                     </div>
                                 </div>
@@ -138,7 +139,7 @@
                                     <div class="col-2 align-items-center d-flex">
                                         <RadzenLabel Text="Zip" />
                                     </div>
-                                    <div class="col-md-8">
+                                    <div class="col">
                                         <RadzenTextBox style="width: 100%;" Name="Zip" @bind-Value=company.Address.Zip />
                                     </div>
                                 </div>
@@ -194,6 +195,14 @@
         } finally {
             isLoading = false;
         }
+    }
+
+    private async Task OpenDefaultsDialog() {
+
+        await dialogService.OpenAsync<DefaultsDialog>($"[Company Name]",
+               new Dictionary<string, object>() { /*{ "CompanyId", company.Id }*/ },
+               new DialogOptions() { Width = "770px", Height = "415px", Resizable = true, Draggable = true });
+
     }
 
     private void ShowExceptionDetails() => showDetailedError = true;
