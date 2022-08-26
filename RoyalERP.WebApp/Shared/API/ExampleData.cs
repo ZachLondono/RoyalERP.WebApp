@@ -5,6 +5,8 @@ using RoyalERP.WebApp.Shared.API.ProductAttributes;
 using RoyalERP.WebApp.Shared.API.ProductClasses;
 using RoyalERP.WebApp.Shared.API.Products;
 using RoyalERP.WebApp.Shared.API.WorkOrders;
+using System;
+using System.Runtime.InteropServices;
 
 namespace RoyalERP.WebApp.Shared.API;
 
@@ -15,7 +17,7 @@ public class ExampleCompanyData : ICompanyAPI {
     public ExampleCompanyData() {
 
         _companies.Add(new() {
-            Id = Guid.NewGuid(),
+            Id = Guid.Parse("21552A61-9F88-454F-A343-3406965BA3CF"),
             Name = "Company A",
             Contact = "John",
             Email = "abc@def.com",
@@ -26,6 +28,18 @@ public class ExampleCompanyData : ICompanyAPI {
                 City = "",
                 State = "",
                 Zip = ""
+            },
+            Defaults = new List<DefaultConfiguration>() {
+                new() {
+                    ProductId = ExampleProductData.DrawerBoxId,
+                    AttributeId = ExampleProductAttributeData.BoxMaterialId,
+                    Value = "Economy Birch"
+                },
+                new() {
+                    ProductId = ExampleProductData.DoorId,
+                    AttributeId = ExampleProductAttributeData.MaterialId,
+                    Value = "MDF 3/4\""
+                }
             }
         });
 
@@ -652,19 +666,25 @@ public class ExampleProductData : IProductAPI {
                 Id = DoorId,
                 Name = "MDF Door",
                 ClassId = ExampleProductClassData.MDFDoorId,
-                Attributes = Enumerable.Empty<Guid>()
+                Attributes = new List<Guid>() {
+                    ExampleProductAttributeData.MaterialId
+                }
             },
             new() {
                 Id = DrawerBoxId,
                 Name = "Drawer Box",
                 ClassId = ExampleProductClassData.DovetailId,
-                Attributes = Enumerable.Empty<Guid>()
+                Attributes = new List<Guid>() {
+                    ExampleProductAttributeData.BoxMaterialId,
+                    ExampleProductAttributeData.BottomMaterialId
+                }
             },
             new() {
                 Id = ClosetId,
                 Name = "Closet Part",
                 ClassId = ExampleProductClassData.ClosetPartId,
                 Attributes = Enumerable.Empty<Guid>()
+                
             }
         };
 
@@ -715,23 +735,27 @@ public class ExampleProductClassData : IProductClassAPI {
 public class ExampleProductAttributeData : IProductAttributeAPI {
 
     private readonly List<ProductAttribute> _attributes;
+    
+    public readonly static Guid BoxMaterialId = new("82B76341-BE26-43CC-A238-9F20E81EA461");
+    public readonly static Guid BottomMaterialId = new("72B76341-BE26-43CC-A238-9F20E81EA461");
+    public readonly static Guid MaterialId = new("62B76341-BE26-43CC-A238-9F20E81EA461");
 
     public ExampleProductAttributeData() {
 
         _attributes = new();
         
         _attributes.Add(new() {
-            Id = Guid.NewGuid(),
+            Id = MaterialId,
             Name = "Material"
         });
 
         _attributes.Add(new() {
-            Id = Guid.NewGuid(),
+            Id = BoxMaterialId,
             Name = "Box Material"
         });
 
         _attributes.Add(new() {
-            Id = Guid.NewGuid(),
+            Id = BottomMaterialId,
             Name = "Bottom Material"
         });
 
