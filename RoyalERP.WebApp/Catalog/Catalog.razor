@@ -16,6 +16,7 @@
 
         <RadzenTabs>
             <Tabs>
+
                 <RadzenTabsItem Text="Products">
                     <div class="row justify-content-end">
                         <div class="col mb-2">
@@ -36,7 +37,28 @@
                             <RadzenCard>
                                 @if (_selectedProducts.Any()) {
                                     var product = _selectedProducts.First();
-                                    <h3>@product.Name</h3>
+
+                                    <div class="row">
+                                        <h3>@product.Name</h3>
+                                    </div>
+
+                                    <div class="row">
+                                        <ul class="list-group list-group-flush" style="border-top:0px;">
+                                            @foreach (var attr in _attributesByProduct[product]) {
+                                                <li class="list-group-item">@attr.Name</li>
+                                            }
+                                        </ul>
+                                    </div>
+
+                                    <div class="row mt-2">
+                                        <div class="col d-flex">
+                                            <RadzenDropDown TValue="string" Data="@(new string[] { "A", "B" })"/>
+                                        </div>
+                                        <div class="col">
+                                            <RadzenButton Text="Add" ButtonStyle="ButtonStyle.Secondary"/>
+                                        </div>
+                                    </div>
+
                                 } else {
                                     <span>Select product to edit</span>
                                 }
@@ -44,42 +66,45 @@
                         </div>
                     </div>
                 </RadzenTabsItem>
+
                 <RadzenTabsItem Text="Classes">
-                        <div class="row justify-content-end">
-                            <div class="col mb-2">
-                                <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Primary">+ Create Class</RadzenButton>
+                    <div class="row justify-content-end">
+                        <div class="col mb-2">
+                            <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Primary">+ Create Class</RadzenButton>
                             <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Light">Export</RadzenButton>
                             <RadzenButton ButtonStyle="ButtonStyle.Light">Upload</RadzenButton>
                         </div>
-                        </div>
+                    </div>
                     <div class="row">
-                            <div class="col">
-                                <RadzenDataGrid TItem="ProductClass" Data="@_productClasses" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
-                                    <Columns>
+                        <div class="col">
+                            <RadzenDataGrid TItem="ProductClass" Data="@_productClasses" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
+                                <Columns>
                                     <RadzenDataGridColumn TItem="ProductClass" Sortable="true" Property="Name" Title="Name" />
-                                    </Columns>
-                                </RadzenDataGrid>
-                            </div>
+                                </Columns>
+                            </RadzenDataGrid>
                         </div>
+                    </div>
                 </RadzenTabsItem>
+
                 <RadzenTabsItem Text="Attributes">
-                        <div class="row justify-content-end">
+                    <div class="row justify-content-end">
                         <div class="col mb-2">
                             <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Primary">+ Create Attribute</RadzenButton>
                             <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Light">Export</RadzenButton>
                         <RadzenButton ButtonStyle="ButtonStyle.Light">Upload</RadzenButton>
                         </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <RadzenDataGrid TItem="ProductAttribute" Data="@_productAttributes" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
+                                <Columns>
+                                <RadzenDataGridColumn TItem="ProductAttribute" Sortable="true" Property="Name" Title="Name" />
+                                </Columns>
+                            </RadzenDataGrid>
                         </div>
-                        <div class="row">
-                            <div class="col">
-                                <RadzenDataGrid TItem="ProductAttribute" Data="@_productAttributes" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
-                                    <Columns>
-                                    <RadzenDataGridColumn TItem="ProductAttribute" Sortable="true" Property="Name" Title="Name" />
-                                    </Columns>
-                                </RadzenDataGrid>
-                            </div>
-                        </div>
+                    </div>
                 </RadzenTabsItem>
+
             </Tabs>
         </RadzenTabs>
 
@@ -107,6 +132,7 @@
     private List<Product> _products = new();
     private List<ProductClass> _productClasses = new();
     private List<ProductAttribute> _productAttributes = new();
+    private Dictionary<Product, List<ProductAttribute>> _attributesByProduct = new();
 
     protected override async Task OnInitializedAsync() {
 
@@ -114,6 +140,22 @@
 
         if (_products.Any())
             _selectedProducts.Add(_products.First());
+
+        foreach (var product in _products) {
+
+            var attributes = new List<ProductAttribute>();
+
+            foreach (var attrId in product.Attributes) {
+
+                var attribute = _productAttributes.Where(a => a.Id.Equals(attrId)).FirstOrDefault();
+                if (attribute is null) continue;
+                attributes.Add(attribute);
+
+            }
+
+            _attributesByProduct.Add(product, attributes);
+
+        }
 
     }
 
