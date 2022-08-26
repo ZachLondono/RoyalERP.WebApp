@@ -14,4 +14,6 @@ public class Company {
 
     public Address Address { get; set; } = new Address();
 
+    public IEnumerable<DefaultConfiguration> Defaults { get; set; } = Enumerable.Empty<DefaultConfiguration>();
+
 }
