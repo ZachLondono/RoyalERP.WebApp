@@ -5,6 +5,7 @@
 @inject ICompanyAPI companyAPI;
 @inject IProductAPI productApi;
 @inject IProductAttributeAPI attributeApi;
+@inject DialogService dialogService
 
 <PageTitle>Companies</PageTitle>
 
@@ -36,7 +37,7 @@
                 <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Light">
                     <i class="bi bi-upload"></i><span class="ml-2">Upload</span>
                 </RadzenButton>
-                <RadzenButton ButtonStyle="ButtonStyle.Primary">
+                <RadzenButton ButtonStyle="ButtonStyle.Primary" Click=@(async () => await CreateNewCompany())>
                     <i class="bi bi-plus-circle"></i><span class="ml-2">Create Company</span>
                 </RadzenButton>
             </div>
@@ -45,7 +46,7 @@
 
     <div class="row">
         <div class="col-3">
-            <RadzenDataGrid TItem="Company" Data="@_companies" RowSelect="OnCompanySelect" @bind-Value=@_selectedCompanies AllowFiltering="false" AllowColumnResize="true" AllowSorting="true" SelectionMode="DataGridSelectionMode.Single">
+            <RadzenDataGrid @ref="companyGrid" TItem="Company" Data="@_companies" RowSelect="OnCompanySelect" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true" SelectionMode="DataGridSelectionMode.Single">
                 <Columns>
                     <RadzenDataGridColumn TItem="Company" Sortable="true" Property="Name" Title="Name" />
                 </Columns>
@@ -244,7 +245,7 @@
     Exception? exception = default;
     bool showDetailedError = false;
 
-    private IList<Company> _selectedCompanies = new List<Company>();
+    private RadzenDataGrid<Company>? companyGrid;
     private Company? _selectedCompany = null;
     private List<Company> _companies = new();
     private Dictionary<Product, List<DefaultViewModel>> _defaultsByProduct = new();
@@ -256,9 +257,21 @@
 
         if (_companies.Any()) {
             var selected = _companies.First();
-            _selectedCompanies.Add(_companies.First());
-            await OnCompanySelect(selected);
+            companyGrid?.SelectRow(selected);
         }
+
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender) {
+
+        if (!firstRender) return Task.CompletedTask;
+
+        if (_companies.Any()) {
+            var selected = _companies.First();
+            companyGrid?.SelectRow(selected);
+        }
+
+        return Task.CompletedTask;
 
     }
 
@@ -337,6 +350,24 @@
             }
 
             _attributesByProducts.Add(product, attributes);
+
+        }
+
+    }
+
+    private async Task CreateNewCompany() {
+
+        var result = await dialogService.OpenAsync<NewCompanyDialog>($"New Company", null, null);
+
+        if (result is Company company) {
+
+            var companiesList = new List<Company>();
+            companiesList.AddRange(_companies);
+            companiesList.Add(company);
+
+            _companies = companiesList;
+
+            companyGrid?.SelectRow(company);
 
         }
 

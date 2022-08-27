@@ -11,4 +11,7 @@ public interface ICompanyAPI {
     [Get("/companies/{id}")]
     public Task<Company> GetById(Guid id);
 
+    [Post("/companies")]
+    public Task<Company> Create([Body]NewCompany newCompany);
+
 }

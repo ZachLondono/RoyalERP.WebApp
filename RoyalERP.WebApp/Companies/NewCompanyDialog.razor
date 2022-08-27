@@ -1,0 +1,50 @@
+﻿@page "/newcompany"
+@using RoyalERP.WebApp.Shared.API.Companies
+@inject ICompanyAPI companyApi;
+@inject DialogService dialogService
+
+<form>
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-2 align-items-center d-flex">
+                <RadzenLabel Text="Name"/>
+            </div>
+            <div class="col">
+                <RadzenTextBox Placeholder="New Company" @bind-value=Name Style="width:100%;"/>
+            </div>
+
+        </div>
+    
+        <div class="row justify-content-center mt-3">
+            <RadzenButton ButtonStyle="ButtonStyle.Primary"
+                            Style="width: 100px;"
+                            IsBusy=_isBusy
+                            Click=@(async () => await Create())
+                            Text="Create"
+                            ButtonType="ButtonType.Submit"/>
+        </div>
+
+    </div>
+</form>
+
+@code {
+    private string Name = string.Empty;
+    private bool _isBusy = false;
+
+    private async Task Create() {
+
+        _isBusy = true;
+
+        var newCompany = await companyApi.Create(new() {
+                Name = Name
+        });
+
+        _isBusy = false;
+
+        dialogService.Close(newCompany);
+
+    }
+
+}
