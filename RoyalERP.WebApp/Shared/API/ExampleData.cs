@@ -79,6 +79,20 @@ public class ExampleCompanyData : ICompanyAPI {
 
     public Task<Company> GetById(Guid id) => Task.FromResult(_companies.Where(c => c.Id == id).First());
 
+    public async Task<Company> Create(NewCompany newCompany) {
+
+        await Task.Delay(500);
+
+        var company = new Company() {
+            Name = newCompany.Name
+        };
+
+        _companies.Add(company);
+
+        return company;
+
+    }
+
 }
 
 public class ExampleOrderData : IOrderAPI {
