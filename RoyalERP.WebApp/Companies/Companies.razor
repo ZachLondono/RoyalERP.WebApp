@@ -5,6 +5,7 @@
 @inject ICompanyAPI companyAPI;
 @inject IProductAPI productApi;
 @inject IProductAttributeAPI attributeApi;
+@inject DialogService dialogService
 
 <PageTitle>Companies</PageTitle>
 
@@ -36,7 +37,7 @@
                 <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Light">
                     <i class="bi bi-upload"></i><span class="ml-2">Upload</span>
                 </RadzenButton>
-                <RadzenButton ButtonStyle="ButtonStyle.Primary">
+                <RadzenButton ButtonStyle="ButtonStyle.Primary" Click=CreateNewCompany>
                     <i class="bi bi-plus-circle"></i><span class="ml-2">Create Company</span>
                 </RadzenButton>
             </div>
@@ -339,6 +340,12 @@
             _attributesByProducts.Add(product, attributes);
 
         }
+
+    }
+
+    private async Task CreateNewCompany() {
+
+        await dialogService.OpenAsync<NewCompanyDialog>($"New Company", null, null);
 
     }
 
