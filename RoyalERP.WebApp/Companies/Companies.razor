@@ -46,7 +46,7 @@
 
     <div class="row">
         <div class="col-3">
-            <RadzenDataGrid TItem="Company" Data="@_companies" RowSelect="OnCompanySelect" @bind-Value=@_selectedCompanies AllowFiltering="false" AllowColumnResize="true" AllowSorting="true" SelectionMode="DataGridSelectionMode.Single">
+            <RadzenDataGrid @ref="companyGrid" TItem="Company" Data="@_companies" RowSelect="OnCompanySelect" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true" SelectionMode="DataGridSelectionMode.Single">
                 <Columns>
                     <RadzenDataGridColumn TItem="Company" Sortable="true" Property="Name" Title="Name" />
                 </Columns>
@@ -245,7 +245,7 @@
     Exception? exception = default;
     bool showDetailedError = false;
 
-    private IList<Company> _selectedCompanies = new List<Company>();
+    private RadzenDataGrid<Company>? companyGrid;
     private Company? _selectedCompany = null;
     private List<Company> _companies = new();
     private Dictionary<Product, List<DefaultViewModel>> _defaultsByProduct = new();
@@ -257,8 +257,21 @@
 
         if (_companies.Any()) {
             var selected = _companies.First();
-            await SelectCompany(selected);
+            companyGrid?.SelectRow(selected);
         }
+
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender) {
+
+        if (!firstRender) return Task.CompletedTask;
+
+        if (_companies.Any()) {
+            var selected = _companies.First();
+            companyGrid?.SelectRow(selected);
+        }
+
+        return Task.CompletedTask;
 
     }
 
@@ -354,17 +367,9 @@
 
             _companies = companiesList;
 
-            await SelectCompany(company);
+            companyGrid?.SelectRow(company);
 
         }
-
-    }
-
-    private async Task SelectCompany(Company company) {
-
-        _selectedCompanies.Clear();
-        _selectedCompanies.Add(company);
-        await OnCompanySelect(company);
 
     }
 
