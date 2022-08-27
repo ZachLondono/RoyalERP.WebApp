@@ -33,9 +33,16 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <RadzenDataGrid TItem="Product" Data="@_products" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@_selectedProducts>
+                            <RadzenDataGrid TItem="Product" Data="@_products" AllowFiltering="false" AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@_selectedProducts>
                                 <Columns>
-                                    <RadzenDataGridColumn TItem="Product" Sortable="true" Property="Name" Title="Name" />
+                                    <RadzenDataGridColumn TItem="Product" Sortable="true" Property="Name" Title="Name" Context="product">
+                                        <Template>
+                                            <span>@product.Name</span>
+                                            <button class="rz-button-sm btn btn-outline-danger float-end">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </Template>
+                                    </RadzenDataGridColumn>
                                 </Columns>
                             </RadzenDataGrid>
                         </div>
@@ -89,9 +96,16 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <RadzenDataGrid TItem="ProductClass" Data="@_productClasses" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
+                            <RadzenDataGrid TItem="ProductClass" Data="@_productClasses" AllowFiltering="false" AllowSorting="true">
                                 <Columns>
-                                    <RadzenDataGridColumn TItem="ProductClass" Sortable="true" Property="Name" Title="Name" />
+                                    <RadzenDataGridColumn TItem="ProductClass" Sortable="true" Property="Name" Title="Name" Context="prodClass">
+                                        <Template>
+                                            <span>@prodClass.Name</span>
+                                            <button class="rz-button-sm btn btn-outline-danger float-end">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </Template>
+                                    </RadzenDataGridColumn>
                                 </Columns>
                             </RadzenDataGrid>
                         </div>
@@ -114,9 +128,16 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <RadzenDataGrid TItem="ProductAttribute" Data="@_productAttributes" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true">
+                            <RadzenDataGrid TItem="ProductAttribute" Data="@_productAttributes" AllowFiltering="false" AllowSorting="true">
                                 <Columns>
-                                <RadzenDataGridColumn TItem="ProductAttribute" Sortable="true" Property="Name" Title="Name" />
+                                    <RadzenDataGridColumn TItem="ProductAttribute" Sortable="true" Property="Name" Title="Name" Context="prodAttribute">
+                                        <Template>
+                                            <span>@prodAttribute.Name</span>
+                                            <button class="rz-button-sm btn btn-outline-danger float-end">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </Template>
+                                    </RadzenDataGridColumn>
                                 </Columns>
                             </RadzenDataGrid>
                         </div>
