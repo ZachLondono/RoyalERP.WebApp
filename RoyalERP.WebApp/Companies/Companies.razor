@@ -37,7 +37,7 @@
                 <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Light">
                     <i class="bi bi-upload"></i><span class="ml-2">Upload</span>
                 </RadzenButton>
-                <RadzenButton ButtonStyle="ButtonStyle.Primary" Click=CreateNewCompany>
+                <RadzenButton ButtonStyle="ButtonStyle.Primary" Click=@(async () => await CreateNewCompany())>
                     <i class="bi bi-plus-circle"></i><span class="ml-2">Create Company</span>
                 </RadzenButton>
             </div>
@@ -257,8 +257,7 @@
 
         if (_companies.Any()) {
             var selected = _companies.First();
-            _selectedCompanies.Add(_companies.First());
-            await OnCompanySelect(selected);
+            await SelectCompany(selected);
         }
 
     }
@@ -345,7 +344,27 @@
 
     private async Task CreateNewCompany() {
 
-        await dialogService.OpenAsync<NewCompanyDialog>($"New Company", null, null);
+        var result = await dialogService.OpenAsync<NewCompanyDialog>($"New Company", null, null);
+
+        if (result is Company company) {
+
+            var companiesList = new List<Company>();
+            companiesList.AddRange(_companies);
+            companiesList.Add(company);
+
+            _companies = companiesList;
+
+            await SelectCompany(company);
+
+        }
+
+    }
+
+    private async Task SelectCompany(Company company) {
+
+        _selectedCompanies.Clear();
+        _selectedCompanies.Add(company);
+        await OnCompanySelect(company);
 
     }
 
