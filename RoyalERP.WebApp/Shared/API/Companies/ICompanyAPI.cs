@@ -17,4 +17,7 @@ public interface ICompanyAPI {
     [Put("/companies/{companyId}")]
     public Task<Company> Update(Guid companyId, [Body] UpdateCompany companyData);
 
+    [Put("/companies/{companyId}/address")]
+    public Task<Company> UpdateAddress(Guid companyId, [Body] Address address);
+
 }

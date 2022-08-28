@@ -108,6 +108,18 @@ public class ExampleCompanyData : ICompanyAPI {
 
     }
 
+    public async Task<Company> UpdateAddress(Guid companyId, Address address) {
+
+        var company = _companies.Where(c => c.Id.Equals(companyId)).First();
+
+        company.Address = address;
+
+        await Task.Delay(500);
+        
+        return company;
+
+    }
+
 }
 
 public class ExampleOrderData : IOrderAPI {
