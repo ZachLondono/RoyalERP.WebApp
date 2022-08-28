@@ -12,6 +12,9 @@ public interface ICompanyAPI {
     public Task<Company> GetById(Guid id);
 
     [Post("/companies")]
-    public Task<Company> Create([Body]NewCompany newCompany);
+    public Task<Company> Create([Body] NewCompany newCompany);
+
+    [Put("/companies/{companyId}")]
+    public Task<Company> Update(Guid companyId, [Body] UpdateCompany companyData);
 
 }

@@ -5,8 +5,6 @@ using RoyalERP.WebApp.Shared.API.ProductAttributes;
 using RoyalERP.WebApp.Shared.API.ProductClasses;
 using RoyalERP.WebApp.Shared.API.Products;
 using RoyalERP.WebApp.Shared.API.WorkOrders;
-using System;
-using System.Runtime.InteropServices;
 
 namespace RoyalERP.WebApp.Shared.API;
 
@@ -88,6 +86,23 @@ public class ExampleCompanyData : ICompanyAPI {
         };
 
         _companies.Add(company);
+
+        return company;
+
+    }
+
+    public async Task<Company> Update(Guid companyId, UpdateCompany companyData) {
+
+        var company = _companies.Where(c => c.Id.Equals(companyId)).First();
+
+        if (companyData.Name is not null)
+            company.Name = companyData.Name;
+        if (companyData.Contact is not null)
+            company.Contact = companyData.Contact;
+        if (companyData.Email is not null)
+            company.Email = companyData.Email;
+
+        await Task.Delay(500);
 
         return company;
 
