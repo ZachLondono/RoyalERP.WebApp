@@ -22,212 +22,215 @@
     }
 </style>
 
-<div class="container">
+@if (isLoading) {
+    <span>Loading...</span>
+} else {
+    <div class="container">
 
-    <div class="row justify-content-end">
-        <div class="col-1">
-            <h2>Companies</h2>
-        </div>
+        <div class="row justify-content-end">
+            <div class="col-1">
+                <h2>Companies</h2>
+            </div>
 
-        <div class="col">
-            <div class="float-end">
-                <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Light">
-                    <i class="bi bi-download"></i><span class="ml-2">Download</span>
-                </RadzenButton>
-                <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Light">
-                    <i class="bi bi-upload"></i><span class="ml-2">Upload</span>
-                </RadzenButton>
-                <RadzenButton ButtonStyle="ButtonStyle.Primary" Click=@(async () => await CreateNewCompany())>
-                    <i class="bi bi-plus-circle"></i><span class="ml-2">Create Company</span>
-                </RadzenButton>
+            <div class="col">
+                <div class="float-end">
+                    <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Light">
+                        <i class="bi bi-download"></i><span class="ml-2">Download</span>
+                    </RadzenButton>
+                    <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Light">
+                        <i class="bi bi-upload"></i><span class="ml-2">Upload</span>
+                    </RadzenButton>
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" Click=@(async () => await CreateNewCompany())>
+                        <i class="bi bi-plus-circle"></i><span class="ml-2">Create Company</span>
+                    </RadzenButton>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="col-3">
-            <RadzenDataGrid @ref="companyGrid" TItem="Company" Data="@_companies" RowSelect="OnCompanySelect" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true" SelectionMode="DataGridSelectionMode.Single">
-                <Columns>
-                    <RadzenDataGridColumn TItem="Company" Sortable="true" Property="Name" Title="Name" />
-                </Columns>
-            </RadzenDataGrid>
-        </div>
-        <div class="col">
-            <RadzenCard>
+        <div class="row">
+            <div class="col-3">
+                <RadzenDataGrid @ref="companyGrid" TItem="Company" Data="@_companies" RowSelect="OnCompanySelect" AllowFiltering="false" AllowColumnResize="true" AllowSorting="true" SelectionMode="DataGridSelectionMode.Single">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="Company" Sortable="true" Property="Name" Title="Name" />
+                    </Columns>
+                </RadzenDataGrid>
+            </div>
+            <div class="col">
+                <RadzenCard>
 
-                @if (_selectedCompany != null) {
-                    <RadzenTemplateForm Data="@_selectedCompany" TItem="Company">
+                    @if (_selectedCompany != null) {
+                        <RadzenTemplateForm Data="@_selectedCompany" TItem="Company">
 
-                        <div class="row">
-                            <div class="col">
-                                <div class="row">
-                                    <div class="col-2 align-items-center d-flex">
-                                        <RadzenLabel Text="Name" />
+                            <div class="row">
+                                <div class="col">
+                                    <div class="row">
+                                        <div class="col-2 align-items-center d-flex">
+                                            <RadzenLabel Text="Name" />
+                                        </div>
+                                        <div class="col">
+                                            <RadzenTextBox style="width: 100%;" Name="Name" @bind-Value=_selectedCompany.Name Change="() => isCompanyDirty = true" />
+                                        </div>
                                     </div>
-                                    <div class="col">
-                                        <RadzenTextBox style="width: 100%;" Name="Name" @bind-Value=_selectedCompany.Name />
+
+                                    <div class="row">
+                                        <div class="col-2 align-items-center d-flex">
+                                            <RadzenLabel Text="Contact" />
+                                        </div>
+                                        <div class="col">
+                                            <RadzenTextBox style="width: 100%;" Name="Contact" @bind-Value=_selectedCompany.Contact Change="() => isCompanyDirty = true" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-2 align-items-center d-flex">
+                                            <RadzenLabel Text="Email" />
+                                        </div>
+                                        <div class="col">
+                                            <RadzenTextBox style="width: 100%;" Name="Email" @bind-Value=_selectedCompany.Email Change="() => isCompanyDirty = true" />
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-2 align-items-center d-flex">
-                                        <RadzenLabel Text="Contact" />
-                                    </div>
-                                    <div class="col">
-                                        <RadzenTextBox style="width: 100%;" Name="Contact" @bind-Value=_selectedCompany.Contact />
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-2 align-items-center d-flex">
-                                        <RadzenLabel Text="Email" />
-                                    </div>
-                                    <div class="col">
-                                        <RadzenTextBox style="width: 100%;" Name="Email" @bind-Value=_selectedCompany.Email />
+                                <div class="col-3">
+                                    <div class="row justify-content-center">
+                                        <RadzenButton Text="Save" ButtonStyle="ButtonStyle.Primary" Style="width: 100px;" Disabled="(!IsDirty)" Click="SaveChanges" BusyText="Saving" IsBusy="isSaving" />
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-3">
-                                <div class="row justify-content-center">
-                                    <RadzenButton Text="Save" ButtonStyle="ButtonStyle.Primary" Style="width: 100px;" Disabled="true"/>
-                                </div>
-                            </div>
-                        </div>
-
-                        <RadzenFieldset AllowCollapse="true" Class="mb-3" Style="background-color:#F9F9F9;">
-
-                            <HeaderTemplate>
-                                <span class="d-inline-flex align-items-center align-middle">
-                                    <RadzenIcon Icon="markunread_mailbox" Class="mr-1" /><b>Address</b>
-                                </span>
-                            </HeaderTemplate>
-
-                            <ChildContent>
-                                <div class="row">
-                                    <div class="col-2 align-items-center d-flex">
-                                        <RadzenLabel Text="Line 1" />
-                                    </div>
-                                    <div class="col">
-                                        <RadzenTextBox style="width: 100%;" Name="Line1" @bind-Value=_selectedCompany.Address.Line1 />
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-2 align-items-center d-flex">
-                                        <RadzenLabel Text="Line 2" />
-                                    </div>
-                                    <div class="col">
-                                        <RadzenTextBox style="width: 100%;" Name="Line2" @bind-Value=_selectedCompany.Address.Line2 />
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-2 align-items-center d-flex">
-                                        <RadzenLabel Text="Line 3" />
-                                    </div>
-                                    <div class="col">
-                                        <RadzenTextBox style="width: 100%;" Name="Line3" @bind-Value=_selectedCompany.Address.Line3 />
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-2 align-items-center d-flex">
-                                        <RadzenLabel Text="City" />
-                                    </div>
-                                    <div class="col">
-                                        <RadzenTextBox style="width: 100%;" Name="City" @bind-Value=_selectedCompany.Address.City />
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-2 align-items-center d-flex">
-                                        <RadzenLabel Text="State" />
-                                    </div>
-                                    <div class="col">
-                                        <RadzenTextBox style="width: 100%;" Name="State" @bind-Value=_selectedCompany.Address.State />
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-2 align-items-center d-flex">
-                                        <RadzenLabel Text="Zip" />
-                                    </div>
-                                    <div class="col">
-                                        <RadzenTextBox style="width: 100%;" Name="Zip" @bind-Value=_selectedCompany.Address.Zip />
-                                    </div>
-                                </div>
-                            </ChildContent>
-
-                        </RadzenFieldset>
-
-                        @foreach (var product in _defaultsByProduct.Keys) {
 
                             <RadzenFieldset AllowCollapse="true" Class="mb-3" Style="background-color:#F9F9F9;">
 
                                 <HeaderTemplate>
                                     <span class="d-inline-flex align-items-center align-middle">
-                                        <b>@product.Name</b>
+                                        <RadzenIcon Icon="markunread_mailbox" Class="mr-1" /><b>Address</b>
                                     </span>
                                 </HeaderTemplate>
 
                                 <ChildContent>
+                                    <div class="row">
+                                        <div class="col-2 align-items-center d-flex">
+                                            <RadzenLabel Text="Line 1" />
+                                        </div>
+                                        <div class="col">
+                                            <RadzenTextBox style="width: 100%;" Name="Line1" @bind-Value=_selectedCompany.Address.Line1 Change="() => isAddressDirty = true" />
+                                        </div>
+                                    </div>
 
                                     <div class="row">
-
-                                        @foreach (var defaultConfig in _defaultsByProduct[product]) {
-                                            <div class="row">
-                                                <div class="col-2 align-items-center d-flex">
-                                                    <RadzenLabel Text="@defaultConfig.AttributeName" />
-                                                </div>
-                                                <div class="col">
-                                                    <RadzenTextBox Style="width:100%" @bind-Value="defaultConfig.DefaultValue" />
-                                                </div>
-                                                <div class="col-1">
-                                                    <button class="rz-button-sm btn btn-outline-danger">
-                                                        <i class="bi bi-x-lg"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        }
-
+                                        <div class="col-2 align-items-center d-flex">
+                                            <RadzenLabel Text="Line 2" />
+                                        </div>
+                                        <div class="col">
+                                            <RadzenTextBox style="width: 100%;" Name="Line2" @bind-Value=_selectedCompany.Address.Line2 Change="() => isAddressDirty = true" />
+                                        </div>
                                     </div>
 
-                                    <div class="row mt-4 justify-content-center">
-
-                                        <div class="col-4 d-flex">
-                                            <!-- Select all attributes from the attributesByProducts where the attribute id is not in the defaultsByProducts  -->
-                                            <RadzenDropDown Style="width:100%" AllowClear="true" TValue="ProductAttribute" TextProperty="Name" Placeholder="Select Attribute" Data="@( _attributesByProducts[product].Where(a => !_defaultsByProduct[product].Any(d => d.AttributeId.Equals(a.Id)) ) )" />
+                                    <div class="row">
+                                        <div class="col-2 align-items-center d-flex">
+                                            <RadzenLabel Text="Line 3" />
                                         </div>
-                                        <div class="col-2 d-flex">
-                                            <RadzenButton Text="Add" ButtonStyle="ButtonStyle.Secondary"/>
+                                        <div class="col">
+                                            <RadzenTextBox style="width: 100%;" Name="Line3" @bind-Value=_selectedCompany.Address.Line3 Change="() => isAddressDirty = true" />
                                         </div>
-
                                     </div>
 
+                                    <div class="row">
+                                        <div class="col-2 align-items-center d-flex">
+                                            <RadzenLabel Text="City" />
+                                        </div>
+                                        <div class="col">
+                                            <RadzenTextBox style="width: 100%;" Name="City" @bind-Value=_selectedCompany.Address.City Change="() => isAddressDirty = true" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-2 align-items-center d-flex">
+                                            <RadzenLabel Text="State" />
+                                        </div>
+                                        <div class="col">
+                                            <RadzenTextBox style="width: 100%;" Name="State" @bind-Value=_selectedCompany.Address.State Change="() => isAddressDirty = true" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-2 align-items-center d-flex">
+                                            <RadzenLabel Text="Zip" />
+                                        </div>
+                                        <div class="col">
+                                            <RadzenTextBox style="width: 100%;" Name="Zip" @bind-Value=_selectedCompany.Address.Zip Change="() => isAddressDirty = true" />
+                                        </div>
+                                    </div>
                                 </ChildContent>
 
                             </RadzenFieldset>
 
-                        }
+                            @foreach (var product in _defaultsByProduct.Keys) {
 
-                        <div class="row justify-content-center new-product-defaults" style="margin-left: 0px; margin-right: 0px;">
-                            <div class="col-4 d-flex">
-                                <RadzenDropDown Style="width:100%" AllowClear="true" TValue="Product" TextProperty="Name" Placeholder="Select Product" Data="@(_attributesByProducts.Keys.Where(p => !_defaultsByProduct.ContainsKey(p)))" />
+                                <RadzenFieldset AllowCollapse="true" Class="mb-3" Style="background-color:#F9F9F9;">
+
+                                    <HeaderTemplate>
+                                        <span class="d-inline-flex align-items-center align-middle">
+                                            <b>@product.Name</b>
+                                        </span>
+                                    </HeaderTemplate>
+
+                                    <ChildContent>
+
+                                        <div class="row">
+
+                                            @foreach (var defaultConfig in _defaultsByProduct[product]) {
+                                                <div class="row">
+                                                    <div class="col-2 align-items-center d-flex">
+                                                        <RadzenLabel Text="@defaultConfig.AttributeName" />
+                                                    </div>
+                                                    <div class="col">
+                                                        <RadzenTextBox Style="width:100%" @bind-Value="defaultConfig.DefaultValue" Change="() => areDefaultsDirty = true" />
+                                                    </div>
+                                                    <div class="col-1">
+                                                        <button class="rz-button-sm btn btn-outline-danger">
+                                                            <i class="bi bi-x-lg"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            }
+
+                                        </div>
+
+                                        <div class="row mt-4 justify-content-center">
+
+                                            <div class="col-4 d-flex">
+                                                <!-- Select all attributes from the attributesByProducts where the attribute id is not in the defaultsByProducts  -->
+                                                <RadzenDropDown Style="width:100%" AllowClear="true" TValue="ProductAttribute" TextProperty="Name" Placeholder="Select Attribute" Data="@( _attributesByProducts[product].Where(a => !_defaultsByProduct[product].Any(d => d.AttributeId.Equals(a.Id)) ) )" />
+                                            </div>
+                                            <div class="col-2 d-flex">
+                                                <RadzenButton Text="Add" ButtonStyle="ButtonStyle.Secondary"/>
+                                            </div>
+
+                                        </div>
+
+                                    </ChildContent>
+
+                                </RadzenFieldset>
+
+                            }
+
+                            <div class="row justify-content-center new-product-defaults" style="margin-left: 0px; margin-right: 0px;">
+                                <div class="col-4 d-flex">
+                                    <RadzenDropDown Style="width:100%" AllowClear="true" TValue="Product" TextProperty="Name" Placeholder="Select Product" Data="@(_attributesByProducts.Keys.Where(p => !_defaultsByProduct.ContainsKey(p)))" />
+                                </div>
+                                <div class="col-2 d-flex">
+                                    <RadzenButton Text="Add" ButtonStyle="ButtonStyle.Secondary" />
+                                </div>
                             </div>
-                            <div class="col-2 d-flex">
-                                <RadzenButton Text="Add" ButtonStyle="ButtonStyle.Secondary" />
-                            </div>
-                        </div>
 
-                    </RadzenTemplateForm>
+                        </RadzenTemplateForm>
 
-                }
+                    }
 
-            </RadzenCard>
+                </RadzenCard>
+            </div>
         </div>
     </div>
-</div>
-
+}
 
 @if (!string.IsNullOrEmpty(errorMsg)) {
     <p style="color:red">@errorMsg</p>
@@ -244,6 +247,12 @@
     string errorMsg = "";
     Exception? exception = default;
     bool showDetailedError = false;
+
+    private bool IsDirty => (isCompanyDirty || isAddressDirty || areDefaultsDirty);
+    private bool isCompanyDirty = false;
+    private bool isAddressDirty = false;
+    private bool areDefaultsDirty = false;
+    private bool isSaving = false;
 
     private RadzenDataGrid<Company>? companyGrid;
     private Company? _selectedCompany = null;
@@ -294,6 +303,8 @@
     private async Task OnCompanySelect(Company company) {
 
         _selectedCompany = company;
+        Clean();
+
         var products = await productApi.GetAll();
 
         Dictionary<Guid, string> attributeNames = new();
@@ -373,11 +384,57 @@
 
     }
 
+    private async Task SaveChanges() {
+
+        if (_selectedCompany is null) return;
+
+        isSaving = true;
+
+        List<Task> updates = new();
+
+        if (isCompanyDirty) {
+            var update = companyAPI.Update(_selectedCompany.Id, new() {
+                Name = _selectedCompany.Name,
+                Email = _selectedCompany.Email,
+                Contact = _selectedCompany.Contact,
+            });
+
+            updates.Add(update);
+        }
+
+        if (isAddressDirty)
+            updates.Add(companyAPI.UpdateAddress(_selectedCompany.Id, _selectedCompany.Address));
+
+
+        if (areDefaultsDirty) {
+            foreach (var product in _defaultsByProduct.Keys) {
+                foreach (var defaultVal in _defaultsByProduct[product]) {
+                    if (defaultVal.IsDirty) {
+                        defaultVal.Save();
+                        updates.Add(Task.Delay(500));
+                    }
+                }
+            }
+        }
+
+        await Task.WhenAll(updates);
+
+        isSaving = false;
+        Clean();
+
+    }
+
+    private void Clean() {
+        isCompanyDirty = false;
+        isAddressDirty = false;
+        areDefaultsDirty = false;
+    }
+
     private void ShowExceptionDetails() => showDetailedError = true;
 
     class DefaultViewModel {
 
-        public bool HasChanged { get; private set; }
+        public bool IsDirty { get; private set; }
 
         public Guid ProductId { get; init; }
 
@@ -389,7 +446,7 @@
         public string DefaultValue {
             get => _defaultValue;
             set {
-                HasChanged = true;
+                IsDirty = true;
                 _defaultValue = value;
             }
         }
@@ -402,7 +459,7 @@
         }
 
         public void Save() {
-            HasChanged = false;
+            IsDirty = false;
         }
 
     }
