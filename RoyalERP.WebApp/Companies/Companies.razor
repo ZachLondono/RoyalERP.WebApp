@@ -186,7 +186,7 @@
                                                         <RadzenTextBox Style="width:100%" @bind-Value="defaultConfig.DefaultValue" Change="() => areDefaultsDirty = true" />
                                                     </div>
                                                     <div class="col-1">
-                                                        <button class="rz-button-sm btn btn-outline-danger">
+                                                        <button class="rz-button-sm btn btn-outline-danger" onclick="() => RemoveDefault(defaultConfig)">
                                                             <i class="bi bi-x-lg"></i>
                                                         </button>
                                                     </div>
@@ -384,6 +384,18 @@
 
     }
 
+    private Task RemoveDefault(DefaultViewModel defaultConfig) {
+
+        return Task.CompletedTask;
+
+    }
+
+    private Task AddDefault() {
+
+        return Task.CompletedTask;
+
+    }
+
     private async Task SaveChanges() {
 
         if (_selectedCompany is null) return;
@@ -411,7 +423,11 @@
                 foreach (var defaultVal in _defaultsByProduct[product]) {
                     if (defaultVal.IsDirty) {
                         defaultVal.Save();
-                        updates.Add(Task.Delay(500));
+                        updates.Add(companyAPI.SetDefaultValue(_selectedCompany.Id, new() {
+                            ProductId = defaultVal.ProductId,
+                            AttributeId = defaultVal.AttributeId,
+                            Value = defaultVal.DefaultValue
+                        }));
                     }
                 }
             }
