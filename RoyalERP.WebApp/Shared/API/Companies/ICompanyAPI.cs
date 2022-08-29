@@ -20,4 +20,7 @@ public interface ICompanyAPI {
     [Put("/companies/{companyId}/address")]
     public Task<Company> UpdateAddress(Guid companyId, [Body] Address address);
 
+    [Put("/companies/{companyId}/defaults")]
+    public Task<Company> SetDefaultValue(Guid companyId, [Body] DefaultConfiguration defaultValue);
+
 }

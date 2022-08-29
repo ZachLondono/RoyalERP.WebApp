@@ -120,6 +120,30 @@ public class ExampleCompanyData : ICompanyAPI {
 
     }
 
+    public async Task<Company> SetDefaultValue(Guid companyId, DefaultConfiguration defaultConfig) {
+
+        var company = _companies.Where(c => c.Id.Equals(companyId)).First();
+
+        var existingConfig = company.Defaults.Where(d => d.ProductId.Equals(defaultConfig.ProductId) && d.AttributeId.Equals(defaultConfig.AttributeId)).FirstOrDefault();
+
+        if (existingConfig is null) {
+
+            var defaultsList = new List<DefaultConfiguration>(company.Defaults);
+            defaultsList.Add(defaultConfig);
+            company.Defaults = defaultsList;
+
+        } else {
+
+            existingConfig.Value = defaultConfig.Value;
+
+        }
+
+        await Task.Delay(500);
+
+        return company;
+
+    }
+
 }
 
 public class ExampleOrderData : IOrderAPI {
