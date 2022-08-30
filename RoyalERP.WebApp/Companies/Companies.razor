@@ -180,7 +180,7 @@
 
                                         <div class="row">
 
-                                            @foreach (var defaultConfig in _defaultsByProduct[product]) {
+                                            @foreach (var defaultConfig in _defaultsByProduct[product].Where(d => !d.IsDeleted)) {
                                                 <div class="row">
                                                     <div class="col-2 align-items-center d-flex">
                                                         <RadzenLabel Text="@defaultConfig.AttributeName" />
@@ -189,7 +189,7 @@
                                                         <RadzenTextBox Style="width:100%" @bind-Value="defaultConfig.DefaultValue" Change="() => areDefaultsDirty = true" />
                                                     </div>
                                                     <div class="col-1">
-                                                        <button class="rz-button-sm btn btn-outline-danger" onclick="@( async () => await RemoveDefault(product, defaultConfig) )">
+                                                        <button class="rz-button-sm btn btn-outline-danger" onclick="@(() => RemoveDefault(product, defaultConfig))">
                                                             <i class="bi bi-x-lg"></i>
                                                         </button>
                                                     </div>
@@ -202,10 +202,19 @@
 
                                             <div class="col-4 d-flex">
                                                 <!-- Select all attributes from the attributesByProducts where the attribute id is not in the defaultsByProducts  -->
-                                                <RadzenDropDown Style="width:100%" AllowClear="true" TValue="ProductAttribute" TextProperty="Name" Placeholder="Select Attribute" Data="@( _attributesByProducts[product].Where(a => !_defaultsByProduct[product].Any(d => d.AttributeId.Equals(a.Id)) ) )" />
+                                                <RadzenDropDown Style="width:100%"
+                                                                AllowClear="true"
+                                                                TValue="ProductAttribute"
+                                                                TextProperty="Name"
+                                                                Placeholder="Select Attribute"
+                                                                Data="@( _attributesByProducts[product].Where(a => !_defaultsByProduct[product].Any(d => !d.IsDeleted && d.AttributeId.Equals(a.Id)) ) )"
+                                                                Change="@( value => AttributeDropDownChange(product, value) )" />
                                             </div>
                                             <div class="col-2 d-flex">
-                                                <RadzenButton Text="Add" ButtonStyle="ButtonStyle.Secondary"/>
+                                                <RadzenButton Text="Add"
+                                                            ButtonStyle="ButtonStyle.Secondary"
+                                                            Click="() => AddDefault(product, _selectedAttributeByProduct[product], string.Empty)"
+                                                            Disabled="!_selectedAttributeByProduct.ContainsKey(product)"/>
                                             </div>
 
                                         </div>
@@ -218,10 +227,19 @@
 
                             <div class="row justify-content-center new-product-defaults" style="margin-left: 0px; margin-right: 0px;">
                                 <div class="col-4 d-flex">
-                                    <RadzenDropDown Style="width:100%" AllowClear="true" TValue="Product" TextProperty="Name" Placeholder="Select Product" Data="@(_attributesByProducts.Keys.Where(p => !_defaultsByProduct.ContainsKey(p)))" />
+                                    <RadzenDropDown Style="width:100%"
+                                                    AllowClear="true"
+                                                    TValue="Product"
+                                                    TextProperty="Name"
+                                                    Placeholder="Select Product"
+                                                    Data="@(_attributesByProducts.Keys.Where(p => !_defaultsByProduct.ContainsKey(p)))"
+                                                    @bind-Value="productsDropdownValue" />
                                 </div>
                                 <div class="col-2 d-flex">
-                                    <RadzenButton Text="Add" ButtonStyle="ButtonStyle.Secondary" />
+                                    <RadzenButton Text="Add"
+                                                ButtonStyle="ButtonStyle.Secondary"
+                                                Click="AddSelectedProduct"
+                                                Disabled="productsDropdownValue is null" />
                                 </div>
                             </div>
 
@@ -258,10 +276,12 @@
     private bool isSaving = false;
 
     private RadzenDataGrid<Company>? companyGrid;
+    private Product? productsDropdownValue;
     private Company? _selectedCompany = null;
     private List<Company> _companies = new();
     private Dictionary<Product, List<DefaultViewModel>> _defaultsByProduct = new();
     private Dictionary<Product, List<ProductAttribute>> _attributesByProducts = new();
+    private Dictionary<Product, ProductAttribute> _selectedAttributeByProduct = new();
 
     protected override async Task OnInitializedAsync() {
 
@@ -343,7 +363,7 @@
 
         _defaultsByProduct = defaults.GroupBy(d => d.ProductId).ToDictionary(g => productsById[g.Key], g => g.ToList());
 
-
+        //TODO: this does not need to be done every time a company is selected
         Dictionary<Guid, ProductAttribute> attributeCache = new();
         _attributesByProducts = new();
         foreach (var product in products) {
@@ -371,7 +391,7 @@
 
     private async Task CreateNewCompany() {
 
-        var result = await dialogService.OpenAsync<NewCompanyDialog>($"New Company", null, null);
+        var result = await dialogService.OpenAsync<NewCompanyDialog>("New Company", null, null);
 
         if (result is Company company) {
 
@@ -387,21 +407,59 @@
 
     }
 
-    private async Task RemoveDefault(Product product, DefaultViewModel defaultConfig) {
+    /// <summary>
+    /// Removes the default from the company. If the default is new, then it has not yet been persisted so it can just be removed from the collection of defaults shown. Otherwise, mark it as deleted so that it can be removed when the user clicks the save button.
+    /// </summary>
+    private void RemoveDefault(Product product, DefaultViewModel defaultConfig) {
 
         if (_selectedCompany is null) return;
 
-        var company = await companyAPI.RemoveDefaultValue(_selectedCompany.Id, defaultConfig.ProductId, defaultConfig.AttributeId);
-
-        _defaultsByProduct[product].Remove(defaultConfig);
+        if (defaultConfig.IsNew)
+            _defaultsByProduct[product].Remove(defaultConfig);
+        else
+            defaultConfig.IsDeleted = true;
 
         StateHasChanged();
 
     }
 
-    private Task AddDefault() {
+    private void AddDefault(Product product, ProductAttribute attribute, string value) {
 
-        return Task.CompletedTask;
+        if (_selectedCompany is null) return;
+
+        if (!_defaultsByProduct.ContainsKey(product)) {
+            _defaultsByProduct.Add(product, new());
+        }
+
+        _defaultsByProduct[product].Add(new DefaultViewModel(product.Id, attribute.Id, attribute.Name, value, isNew: true));
+
+        _selectedAttributeByProduct.Remove(product);
+
+        StateHasChanged();
+
+    }
+
+    private void AttributeDropDownChange(Product product, object? value) {
+
+        if (value is null) {
+
+            _selectedAttributeByProduct.Remove(product);
+
+        } else {
+
+            _selectedAttributeByProduct[product] = (ProductAttribute)value;
+
+        }
+
+    }
+
+    private void AddSelectedProduct() {
+
+        if (productsDropdownValue is null) return;
+
+        _defaultsByProduct.Add(productsDropdownValue, new());
+
+        productsDropdownValue = null;
 
     }
 
@@ -429,15 +487,28 @@
 
         if (areDefaultsDirty) {
             foreach (var product in _defaultsByProduct.Keys) {
-                foreach (var defaultVal in _defaultsByProduct[product]) {
-                    if (defaultVal.IsDirty) {
-                        defaultVal.Save();
-                        updates.Add(companyAPI.SetDefaultValue(_selectedCompany.Id, new() {
+                foreach (var defaultVal in _defaultsByProduct[product].Where(d => d.IsDirty)) {
+
+                    Task update;
+
+                    if(defaultVal.IsDeleted) {
+
+                        update = companyAPI.RemoveDefaultValue(_selectedCompany.Id, defaultVal.ProductId, defaultVal.AttributeId);
+
+                    } else {
+
+                        update = companyAPI.SetDefaultValue(_selectedCompany.Id, new() {
                             ProductId = defaultVal.ProductId,
                             AttributeId = defaultVal.AttributeId,
                             Value = defaultVal.DefaultValue
-                        }));
+                        });
+
                     }
+
+                    updates.Add(update);
+
+                    defaultVal.Save();
+
                 }
             }
         }
@@ -461,6 +532,18 @@
 
         public bool IsDirty { get; private set; }
 
+        public bool IsNew { get; private set; }
+
+        private bool _isDeleted = false;
+        public bool IsDeleted {
+            get => _isDeleted;
+            set {
+                IsDirty = true;
+                _isDeleted = value;
+                IsNew = false;
+            }
+        }
+
         public Guid ProductId { get; init; }
 
         public Guid AttributeId { get; init; }
@@ -476,15 +559,18 @@
             }
         }
 
-        public DefaultViewModel(Guid productId, Guid attributeId, string attributeName, string defaultValue) {
+        public DefaultViewModel(Guid productId, Guid attributeId, string attributeName, string defaultValue, bool isNew = false) {
             ProductId = productId;
             AttributeId = attributeId;
             AttributeName = attributeName;
             _defaultValue = defaultValue;
+            IsNew = isNew;
         }
 
         public void Save() {
             IsDirty = false;
+            IsNew = false;
+            _isDeleted = false;
         }
 
     }
