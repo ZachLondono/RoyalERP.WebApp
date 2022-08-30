@@ -144,6 +144,23 @@ public class ExampleCompanyData : ICompanyAPI {
 
     }
 
+    public async Task<Company> RemoveDefaultValue(Guid companyId, Guid productId, Guid attributeId) {
+
+        var company = _companies.Where(c => c.Id.Equals(companyId)).First();
+
+        var existingConfig = company.Defaults.Where(d => d.ProductId.Equals(productId) && d.AttributeId.Equals(attributeId)).FirstOrDefault();
+
+        var newList = company.Defaults.ToList();
+        newList.Remove(existingConfig!);
+
+        company.Defaults = newList.AsEnumerable();
+
+        await Task.Delay(500);
+
+        return company;
+
+    }
+
 }
 
 public class ExampleOrderData : IOrderAPI {

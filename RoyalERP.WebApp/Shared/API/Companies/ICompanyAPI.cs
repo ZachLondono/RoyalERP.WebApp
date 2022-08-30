@@ -23,4 +23,7 @@ public interface ICompanyAPI {
     [Put("/companies/{companyId}/defaults")]
     public Task<Company> SetDefaultValue(Guid companyId, [Body] DefaultConfiguration defaultValue);
 
+    [Delete("/companies/{companyId}/defaults/{productId}/{attributeId}")]
+    public Task<Company> RemoveDefaultValue(Guid companyId, Guid productId, Guid attributeId);
+
 }
