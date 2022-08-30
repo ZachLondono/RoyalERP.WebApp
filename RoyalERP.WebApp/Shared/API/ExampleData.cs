@@ -5,8 +5,6 @@ using RoyalERP.WebApp.Shared.API.ProductAttributes;
 using RoyalERP.WebApp.Shared.API.ProductClasses;
 using RoyalERP.WebApp.Shared.API.Products;
 using RoyalERP.WebApp.Shared.API.WorkOrders;
-using System;
-using System.Runtime.InteropServices;
 
 namespace RoyalERP.WebApp.Shared.API;
 
@@ -88,6 +86,76 @@ public class ExampleCompanyData : ICompanyAPI {
         };
 
         _companies.Add(company);
+
+        return company;
+
+    }
+
+    public async Task<Company> Update(Guid companyId, UpdateCompany companyData) {
+
+        var company = _companies.Where(c => c.Id.Equals(companyId)).First();
+
+        if (companyData.Name is not null)
+            company.Name = companyData.Name;
+        if (companyData.Contact is not null)
+            company.Contact = companyData.Contact;
+        if (companyData.Email is not null)
+            company.Email = companyData.Email;
+
+        await Task.Delay(500);
+
+        return company;
+
+    }
+
+    public async Task<Company> UpdateAddress(Guid companyId, Address address) {
+
+        var company = _companies.Where(c => c.Id.Equals(companyId)).First();
+
+        company.Address = address;
+
+        await Task.Delay(500);
+        
+        return company;
+
+    }
+
+    public async Task<Company> SetDefaultValue(Guid companyId, DefaultConfiguration defaultConfig) {
+
+        var company = _companies.Where(c => c.Id.Equals(companyId)).First();
+
+        var existingConfig = company.Defaults.Where(d => d.ProductId.Equals(defaultConfig.ProductId) && d.AttributeId.Equals(defaultConfig.AttributeId)).FirstOrDefault();
+
+        if (existingConfig is null) {
+
+            var defaultsList = new List<DefaultConfiguration>(company.Defaults);
+            defaultsList.Add(defaultConfig);
+            company.Defaults = defaultsList;
+
+        } else {
+
+            existingConfig.Value = defaultConfig.Value;
+
+        }
+
+        await Task.Delay(500);
+
+        return company;
+
+    }
+
+    public async Task<Company> RemoveDefaultValue(Guid companyId, Guid productId, Guid attributeId) {
+
+        var company = _companies.Where(c => c.Id.Equals(companyId)).First();
+
+        var existingConfig = company.Defaults.Where(d => d.ProductId.Equals(productId) && d.AttributeId.Equals(attributeId)).FirstOrDefault();
+
+        var newList = company.Defaults.ToList();
+        newList.Remove(existingConfig!);
+
+        company.Defaults = newList.AsEnumerable();
+
+        await Task.Delay(500);
 
         return company;
 
