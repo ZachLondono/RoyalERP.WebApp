@@ -5,6 +5,7 @@
 @inject IProductAPI productApi
 @inject IProductClassAPI productclassApi
 @inject IProductAttributeAPI attributeApi
+@inject DialogService dialogService
 
 <PageTitle>Catalog</PageTitle>
 
@@ -16,6 +17,8 @@
 
         <RadzenTabs>
             <Tabs>
+
+                <!-- Products -->
 
                 <RadzenTabsItem Text="Products">
                     <div class="row justify-content-end">
@@ -80,6 +83,9 @@
                     </div>
                 </RadzenTabsItem>
 
+
+                <!-- Product Classes -->
+
                 <RadzenTabsItem Text="Classes">
                     <div class="row justify-content-end">
                         <div class="col mb-2">
@@ -112,10 +118,12 @@
                     </div>
                 </RadzenTabsItem>
 
+                <!-- Product Attributes -->
+
                 <RadzenTabsItem Text="Attributes">
                     <div class="row justify-content-end">
                         <div class="col mb-2">
-                            <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Primary">
+                            <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Primary" Click="CreateAttribute">
                                 <i class="bi bi-plus-circle"></i><span class="ml-2">Create Attribute</span>
                             </RadzenButton>
                             <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Light">
@@ -128,15 +136,34 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <RadzenDataGrid TItem="ProductAttribute" Data="@_productAttributes" AllowFiltering="false" AllowSorting="true">
+                            <RadzenDataGrid TItem="ProductAttribute" Data="@_productAttributes" AllowFiltering="false" AllowSorting="true" @ref="attributesGrid">
                                 <Columns>
-                                    <RadzenDataGridColumn TItem="ProductAttribute" Sortable="true" Property="Name" Title="Name" Context="prodAttribute">
-                                        <Template>
-                                            <span>@prodAttribute.Name</span>
-                                            <button class="rz-button-sm btn btn-outline-danger float-end">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
+                                    <RadzenDataGridColumn TItem="ProductAttribute" Sortable="true" Property="Name" Title="Name" Context="ProductAttribute">
+                                        <EditTemplate>
+                                            <RadzenTextBox @bind-Value="ProductAttribute.Name" />
+                                        </EditTemplate>
+                                    </RadzenDataGridColumn>
+                                    <RadzenDataGridColumn TItem="ProductAttribute" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="120px">
+                                        <Template Context="attribute">
+                                            <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="(async () => await EditAttributeRow(attribute))" @onclick:stopPropagation="true">
+                                            </RadzenButton>
                                         </Template>
+                                        <EditTemplate Context="attribute">
+                                            <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Primary" Class="m-1" Click="(async () => await SaveAttriubteRow(attribute))">
+                                            </RadzenButton>
+                                            <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="(async () => await CancelAttributeEdit(attribute))">
+                                            </RadzenButton>
+                                        </EditTemplate>
+                                    </RadzenDataGridColumn>
+                                    <RadzenDataGridColumn TItem="ProductAttribute" Context="order" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="60px">
+                                        <Template Context="attribute">
+                                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Class="m-1" Click="@(args => DeleteAttributeRow(attribute))" @onclick:stopPropagation="true">
+                                            </RadzenButton>
+                                        </Template>
+                                        <EditTemplate Context="attribute">
+                                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Class="m-1" Click="@(args => DeleteAttributeRow(attribute))">
+                                            </RadzenButton>
+                                        </EditTemplate>
                                     </RadzenDataGridColumn>
                                 </Columns>
                             </RadzenDataGrid>
@@ -167,10 +194,12 @@
     Exception? exception = default;
     bool showDetailedError = false;
 
+    private List<ProductAttribute> _productAttributes = new();
+    private RadzenDataGrid<ProductAttribute>? attributesGrid;
+
     private IList<Product> _selectedProducts = new List<Product>();
     private List<Product> _products = new();
     private List<ProductClass> _productClasses = new();
-    private List<ProductAttribute> _productAttributes = new();
     private Dictionary<Product, List<ProductAttribute>> _attributesByProduct = new();
 
     protected override async Task OnInitializedAsync() {
@@ -213,6 +242,41 @@
         } finally {
             isLoading = false;
         }
+    }
+
+    private async Task CreateAttribute() {
+
+        if (attributesGrid is null) return;
+
+        var result = await dialogService.OpenAsync<NewAttributeDialog>("New Attribute", null, null);
+
+        if (result is ProductAttribute attribute) {
+
+            await attributesGrid.InsertRow(attribute);
+
+        }
+
+    }
+
+    private async Task EditAttributeRow(ProductAttribute attribute) {
+        if (attributesGrid is null) return;
+        await attributesGrid.EditRow(attribute);
+    }
+
+    private async Task CancelAttributeEdit(ProductAttribute attribute) {
+        if (attributesGrid is null) return;
+        attributesGrid.CancelEditRow(attribute);
+    }
+
+    private async Task SaveAttriubteRow(ProductAttribute attribute) {
+        if (attributesGrid is null) return;
+        await attributesGrid.UpdateRow(attribute);
+    }
+
+    private async Task DeleteAttributeRow(ProductAttribute attribute) {
+        if (attributesGrid is null) return;
+        _productAttributes.Remove(attribute);
+        await attributesGrid.Reload();
     }
 
     private void ShowExceptionDetails() => showDetailedError = true;
