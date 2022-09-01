@@ -23,13 +23,15 @@
                             IsBusy=_isBusy
                             Click=@(async () => await Create())
                             Text="Create"
-                            ButtonType="ButtonType.Submit"/>
+                            ButtonType="ButtonType.Submit"
+                            Disabled="@(string.IsNullOrEmpty(Name))" />
         </div>
 
     </div>
 </form>
 
 @code {
+    
     private string Name = string.Empty;
     private bool _isBusy = false;
 
