@@ -36,14 +36,12 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <RadzenDataGrid TItem="Product" Data="@_products" AllowFiltering="false" AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@_selectedProducts>
+                            <RadzenDataGrid TItem="Product" Data="@_products" AllowFiltering="false" AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@_selectedProducts @ref="productsGrid">
                                 <Columns>
-                                    <RadzenDataGridColumn TItem="Product" Sortable="true" Property="Name" Title="Name" Context="product">
-                                        <Template>
-                                            <span>@product.Name</span>
-                                            <button class="rz-button-sm btn btn-outline-danger float-end">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
+                                    <RadzenDataGridColumn TItem="Product" Sortable="true" Property="Name" Title="Name" Context="product" />
+                                    <RadzenDataGridColumn TItem="Product" Context="product" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="60px">
+                                        <Template Context="product">
+                                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Class="m-1" Click="@(args => DeleteProductRow(product))" @onclick:stopPropagation="true" />
                                         </Template>
                                     </RadzenDataGridColumn>
                                 </Columns>
@@ -149,20 +147,16 @@
                                             </RadzenButton>
                                         </Template>
                                         <EditTemplate Context="attribute">
-                                            <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Primary" Class="m-1" Click="(async () => await SaveAttriubteRow(attribute))">
-                                            </RadzenButton>
-                                            <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="(async () => await CancelAttributeEdit(attribute))">
-                                            </RadzenButton>
+                                            <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Primary" Class="m-1" Click="(async () => await SaveAttriubteRow(attribute))" />
+                                            <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="(async () => await CancelAttributeEdit(attribute))" />
                                         </EditTemplate>
                                     </RadzenDataGridColumn>
                                     <RadzenDataGridColumn TItem="ProductAttribute" Context="order" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="60px">
                                         <Template Context="attribute">
-                                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Class="m-1" Click="@(args => DeleteAttributeRow(attribute))" @onclick:stopPropagation="true">
-                                            </RadzenButton>
+                                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Class="m-1" Click="@(args => DeleteAttributeRow(attribute))" @onclick:stopPropagation="true" />
                                         </Template>
                                         <EditTemplate Context="attribute">
-                                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Class="m-1" Click="@(args => DeleteAttributeRow(attribute))">
-                                            </RadzenButton>
+                                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Class="m-1" Click="@(args => DeleteAttributeRow(attribute))" />
                                         </EditTemplate>
                                     </RadzenDataGridColumn>
                                 </Columns>
@@ -194,11 +188,13 @@
     Exception? exception = default;
     bool showDetailedError = false;
 
+    private List<Product> _products = new();
+    private RadzenDataGrid<Product>? productsGrid;
+
     private List<ProductAttribute> _productAttributes = new();
     private RadzenDataGrid<ProductAttribute>? attributesGrid;
 
     private IList<Product> _selectedProducts = new List<Product>();
-    private List<Product> _products = new();
     private List<ProductClass> _productClasses = new();
     private Dictionary<Product, List<ProductAttribute>> _attributesByProduct = new();
 
@@ -242,6 +238,13 @@
         } finally {
             isLoading = false;
         }
+    }
+
+    private async Task DeleteProductRow(Product product) {
+        if (productsGrid is null) return;
+        _products.Remove(product);
+        await productApi.Delete(product.Id);
+        await productsGrid.Reload();
     }
 
     private async Task CreateAttribute() {
