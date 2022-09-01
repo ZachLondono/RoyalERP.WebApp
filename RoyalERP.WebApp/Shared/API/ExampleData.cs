@@ -777,6 +777,14 @@ public class ExampleProductData : IProductAPI {
 
     public Task<Product?> GetById(Guid productid) => Task.FromResult(_products.Where(p => p.Id.Equals(productid)).FirstOrDefault());
 
+    public async Task Delete(Guid productId) {
+
+        var product = _products.First(p => p.Id.Equals(productId));
+        _products.Remove(product);
+        await Task.Delay(500);
+
+    }
+
 }
 
 public class ExampleProductClassData : IProductClassAPI {

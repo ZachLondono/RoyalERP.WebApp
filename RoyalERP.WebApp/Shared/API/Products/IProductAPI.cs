@@ -11,4 +11,7 @@ public interface IProductAPI {
     [Get("/products/{productid}")]
     public Task<Product?> GetById(Guid productid);
 
+    [Delete("/products/{productId}")]
+    public Task Delete(Guid productId);
+
 }
