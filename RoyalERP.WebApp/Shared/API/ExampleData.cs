@@ -1,4 +1,5 @@
-﻿using RoyalERP.WebApp.Shared.API.Companies;
+﻿using Refit;
+using RoyalERP.WebApp.Shared.API.Companies;
 using RoyalERP.WebApp.Shared.API.Events;
 using RoyalERP.WebApp.Shared.API.Orders;
 using RoyalERP.WebApp.Shared.API.ProductAttributes;
@@ -847,4 +848,39 @@ public class ExampleProductAttributeData : IProductAttributeAPI {
 
     public Task<ProductAttribute?> GetById(Guid id) => Task.FromResult(_attributes.Where(a => a.Id.Equals(id)).FirstOrDefault());
 
+    public async Task<ProductAttribute?> Create([Body] NewProductAttribute newAttribute) {
+
+        var attribute = new ProductAttribute() {
+            Name = newAttribute.Name
+        };
+
+        _attributes.Add(attribute);
+
+        await Task.Delay(500);
+
+        return attribute;
+
+    }
+
+    public async Task<ProductAttribute?> Update(Guid id, [Body] ProductAttributeUpdate updatedAttribute) {
+
+        var attribute = _attributes.First(a => a.Id.Equals(id));
+        
+        attribute.Name = updatedAttribute.Name;
+
+        await Task.Delay(500);
+
+        return attribute;
+
+    }
+
+    public async Task Delete(Guid id) {
+
+        var attribute = _attributes.First(a => a.Id.Equals(id));
+
+        _attributes.Remove(attribute);
+
+        await Task.Delay(500);
+
+    }
 }
