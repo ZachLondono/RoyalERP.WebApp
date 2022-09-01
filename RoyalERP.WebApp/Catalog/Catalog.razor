@@ -38,7 +38,7 @@
                         <div class="col">
                             <RadzenDataGrid TItem="Product" Data="@_products" AllowFiltering="false" AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@_selectedProducts @ref="productsGrid">
                                 <Columns>
-                                    <RadzenDataGridColumn TItem="Product" Sortable="true" Property="Name" Title="Name" Context="product" />
+                                    <RadzenDataGridColumn TItem="Product" Sortable="true" Property="Name" Title="Name" Context="product">
                                     <RadzenDataGridColumn TItem="Product" Context="product" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="60px">
                                         <Template Context="product">
                                             <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Class="m-1" Click="@(args => DeleteProductRow(product))" @onclick:stopPropagation="true" />
