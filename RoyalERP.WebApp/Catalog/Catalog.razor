@@ -273,6 +273,7 @@
 
     private async Task SaveAttriubteRow(ProductAttribute attribute) {
         if (attributesGrid is null) return;
+        await attributeApi.Update(attribute.Id, new() { Name = attribute.Name });
         await attributesGrid.UpdateRow(attribute);
     }
 
