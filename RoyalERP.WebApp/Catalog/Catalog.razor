@@ -136,9 +136,9 @@
                         <div class="col">
                             <RadzenDataGrid TItem="ProductAttribute" Data="@_productAttributes" AllowFiltering="false" AllowSorting="true" @ref="attributesGrid">
                                 <Columns>
-                                    <RadzenDataGridColumn TItem="ProductAttribute" Sortable="true" Property="Name" Title="Name" Context="ProductAttribute">
+                                    <RadzenDataGridColumn TItem="ProductAttribute" Sortable="true" Property="Name" Title="Name" Context="attribute">
                                         <EditTemplate>
-                                            <RadzenTextBox @bind-Value="ProductAttribute.Name" />
+                                            <RadzenTextBox @bind-Value="attribute.Name" />
                                         </EditTemplate>
                                     </RadzenDataGridColumn>
                                     <RadzenDataGridColumn TItem="ProductAttribute" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="120px">
@@ -148,7 +148,7 @@
                                         </Template>
                                         <EditTemplate Context="attribute">
                                             <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Primary" Class="m-1" Click="(async () => await SaveAttriubteRow(attribute))" />
-                                            <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="(async () => await CancelAttributeEdit(attribute))" />
+                                            <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="(() => CancelAttributeEdit(attribute))" />
                                         </EditTemplate>
                                     </RadzenDataGridColumn>
                                     <RadzenDataGridColumn TItem="ProductAttribute" Context="order" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="60px">
@@ -266,7 +266,7 @@
         await attributesGrid.EditRow(attribute);
     }
 
-    private async Task CancelAttributeEdit(ProductAttribute attribute) {
+    private void CancelAttributeEdit(ProductAttribute attribute) {
         if (attributesGrid is null) return;
         attributesGrid.CancelEditRow(attribute);
     }
