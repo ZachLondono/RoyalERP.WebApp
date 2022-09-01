@@ -276,6 +276,7 @@
     private async Task DeleteAttributeRow(ProductAttribute attribute) {
         if (attributesGrid is null) return;
         _productAttributes.Remove(attribute);
+        await attributeApi.Delete(attribute.Id);
         await attributesGrid.Reload();
     }
 
