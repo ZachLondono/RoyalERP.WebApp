@@ -87,7 +87,7 @@
                 <RadzenTabsItem Text="Classes">
                     <div class="row justify-content-end">
                         <div class="col mb-2">
-                            <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Primary">
+                            <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Primary" Click="CreateClass">
                                 <i class="bi bi-plus-circle"></i><span class="ml-2">Create Class</span>
                             </RadzenButton>
                             <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Light">
@@ -261,20 +261,19 @@
         await productsGrid.Reload();
     }
 
-    private Task CreateClass() {
+    private async Task CreateClass() {
 
-        /*
         if (classesGrid is null) return;
 
         var result = await dialogService.OpenAsync<NewClassDialog>("New Class", null, null);
 
-        if (result is ProductAttribute attribute) {
+        if (result is ProductClass prodClass) {
 
-            await classesGrid.InsertRow(attribute);
+            await classesGrid.InsertRow(prodClass);
+            await classesGrid.UpdateRow(prodClass);
 
-        }*/
+        }
 
-        return Task.CompletedTask;
     }
 
     private async Task EditClassRow(ProductClass prodClass) {
@@ -289,14 +288,14 @@
 
     private async Task SaveClassRow(ProductClass prodClass) {
         if (classesGrid is null) return;
-        //await productclassApi.Update(prodClass.Id, new() { Name = prodClass.Name });
+        await productclassApi.Update(prodClass.Id, new() { Name = prodClass.Name });
         await classesGrid.UpdateRow(prodClass);
     }
 
     private async Task DeleteClassRow(ProductClass prodClass) {
         if (classesGrid is null) return;
         _productClasses.Remove(prodClass);
-        //await productclassApi.Delete(prodClass.Id);
+        await productclassApi.Delete(prodClass.Id);
         await classesGrid.Reload();
     }
 
@@ -309,6 +308,7 @@
         if (result is ProductAttribute attribute) {
 
             await attributesGrid.InsertRow(attribute);
+            await attributesGrid.UpdateRow(attribute);
 
         }
 
