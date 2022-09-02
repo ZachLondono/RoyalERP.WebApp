@@ -821,6 +821,43 @@ public class ExampleProductClassData : IProductClassAPI {
     public Task<IEnumerable<ProductClass>> GetAll() => Task.FromResult(_classes.AsEnumerable());
 
     public Task<ProductClass?> GetById(Guid id) => Task.FromResult(_classes.Where(c => c.Id.Equals(id)).FirstOrDefault());
+
+    public async Task<ProductClass> Create(NewProductClass newClass) {
+
+        var prodClass = new ProductClass() {
+            Id = Guid.NewGuid(),
+            Name = newClass.Name
+        };
+
+        _classes.Add(prodClass);
+
+        await Task.Delay(500);
+
+        return prodClass;
+
+    }
+
+    public async Task Delete(Guid id) {
+
+        var prodClass = _classes.First(c => c.Id.Equals(id));
+        _classes.Remove(prodClass);
+
+        await Task.Delay(500);
+
+    }
+
+    public async Task<ProductClass> Update(Guid id, ProductClassUpdate update) {
+        
+        var prodClass = _classes.First(c => c.Id.Equals(id));
+
+        prodClass.Name = update.Name;
+
+        await Task.Delay(500);
+
+        return prodClass;
+
+    }
+
 }
 
 public class ExampleProductAttributeData : IProductAttributeAPI {
