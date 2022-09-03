@@ -1,0 +1,98 @@
+﻿@using RoyalERP.WebApp.Shared.API.ProductAttributes
+@inject IProductAttributeAPI attributeApi
+@inject DialogService dialogService
+
+<div class="row justify-content-end">
+    <div class="col mb-2">
+        <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Primary" Click="CreateAttribute">
+            <i class="bi bi-plus-circle"></i><span class="ml-2">Create Attribute</span>
+        </RadzenButton>
+        <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Light">
+            <i class="bi bi-download"></i><span class="ml-2">Download</span>
+        </RadzenButton>
+        <RadzenButton ButtonStyle="ButtonStyle.Light">
+            <i class="bi bi-upload"></i><span class="ml-2">Upload</span>
+        </RadzenButton>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <RadzenDataGrid TItem="ProductAttribute" Data="@_productAttributes" AllowFiltering="false" AllowSorting="true" @ref="attributesGrid">
+            <Columns>
+                <RadzenDataGridColumn TItem="ProductAttribute" Sortable="true" Property="Name" Title="Name" Context="attribute">
+                    <EditTemplate>
+                        <RadzenTextBox @bind-Value="attribute.Name" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ProductAttribute" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="120px">
+                    <Template Context="attribute">
+                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="(async () => await EditAttributeRow(attribute))" @onclick:stopPropagation="true">
+                        </RadzenButton>
+                    </Template>
+                    <EditTemplate Context="attribute">
+                        <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Primary" Class="m-1" Click="(async () => await SaveAttributeRow(attribute))" />
+                        <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="(() => CancelAttributeEdit(attribute))" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ProductAttribute" Context="order" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="60px">
+                    <Template Context="attribute">
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Class="m-1" Click="@(args => DeleteAttributeRow(attribute))" @onclick:stopPropagation="true" />
+                    </Template>
+                    <EditTemplate Context="attribute">
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Class="m-1" Click="@(args => DeleteAttributeRow(attribute))" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+</div>
+
+
+@code {
+
+    private RadzenDataGrid<ProductAttribute>? attributesGrid;
+    private List<ProductAttribute> _productAttributes = new();
+
+    protected override async Task OnInitializedAsync() {
+        _productAttributes = new(await attributeApi.GetAll());
+    }
+
+    private async Task CreateAttribute() {
+
+        if (attributesGrid is null) return;
+
+        var result = await dialogService.OpenAsync<NewAttributeDialog>("New Attribute", null, null);
+
+        if (result is ProductAttribute attribute) {
+
+            await attributesGrid.InsertRow(attribute);
+            await attributesGrid.UpdateRow(attribute);
+
+        }
+
+    }
+
+    private async Task EditAttributeRow(ProductAttribute attribute) {
+        if (attributesGrid is null) return;
+        await attributesGrid.EditRow(attribute);
+    }
+
+    private void CancelAttributeEdit(ProductAttribute attribute) {
+        if (attributesGrid is null) return;
+        attributesGrid.CancelEditRow(attribute);
+    }
+
+    private async Task SaveAttributeRow(ProductAttribute attribute) {
+        if (attributesGrid is null) return;
+        await attributeApi.Update(attribute.Id, new() { Name = attribute.Name });
+        await attributesGrid.UpdateRow(attribute);
+    }
+
+    private async Task DeleteAttributeRow(ProductAttribute attribute) {
+        if (attributesGrid is null) return;
+        _productAttributes.Remove(attribute);
+        await attributeApi.Delete(attribute.Id);
+        await attributesGrid.Reload();
+    }
+
+}
