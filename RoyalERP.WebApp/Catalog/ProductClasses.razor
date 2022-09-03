@@ -1,0 +1,91 @@
+﻿@using RoyalERP.WebApp.Shared.API.ProductClasses
+@inject IProductClassAPI productclassApi
+@inject DialogService dialogService
+
+
+<div class="row justify-content-end">
+    <div class="col mb-2">
+        <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Primary" Click="CreateClass">
+            <i class="bi bi-plus-circle"></i><span class="ml-2">Create Class</span>
+        </RadzenButton>
+        <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Light">
+            <i class="bi bi-download"></i><span class="ml-2">Download</span>
+        </RadzenButton>
+        <RadzenButton ButtonStyle="ButtonStyle.Light">
+            <i class="bi bi-upload"></i><span class="ml-2">Upload</span>
+        </RadzenButton>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <RadzenDataGrid TItem="ProductClass" Data="@_productClasses" AllowFiltering="false" AllowSorting="true" @ref="classesGrid">
+            <Columns>
+                <RadzenDataGridColumn TItem="ProductClass" Sortable="true" Property="Name" Title="Name" Context="prodClass">
+                    <EditTemplate>
+                        <RadzenTextBox @bind-Value="prodClass.Name" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ProductClass" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="120px">
+                    <Template Context="prodClass">
+                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="(async () => await EditClassRow(prodClass))" @onclick:stopPropagation="true">
+                        </RadzenButton>
+                    </Template>
+                    <EditTemplate Context="prodClass">
+                        <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Primary" Class="m-1" Click="(async () => await SaveClassRow(prodClass))" />
+                        <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="(() => CancelClassEdit(prodClass))" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ProductClass" Context="prodClass" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="60px">
+                    <Template Context="prodClass">
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Class="m-1" Click="@(args => DeleteClassRow(prodClass))" @onclick:stopPropagation="true" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+</div>
+
+@code {
+
+    private List<ProductClass> _productClasses = new();
+    private RadzenDataGrid<ProductClass>? classesGrid;
+
+    private async Task CreateClass() {
+
+        if (classesGrid is null) return;
+
+        var result = await dialogService.OpenAsync<NewClassDialog>("New Class", null, null);
+
+        if (result is ProductClass prodClass) {
+
+            await classesGrid.InsertRow(prodClass);
+            await classesGrid.UpdateRow(prodClass);
+
+        }
+
+    }
+
+    private async Task EditClassRow(ProductClass prodClass) {
+        if (classesGrid is null) return;
+        await classesGrid.EditRow(prodClass);
+    }
+
+    private void CancelClassEdit(ProductClass prodClass) {
+        if (classesGrid is null) return;
+        classesGrid.CancelEditRow(prodClass);
+    }
+
+    private async Task SaveClassRow(ProductClass prodClass) {
+        if (classesGrid is null) return;
+        await productclassApi.Update(prodClass.Id, new() { Name = prodClass.Name });
+        await classesGrid.UpdateRow(prodClass);
+    }
+
+    private async Task DeleteClassRow(ProductClass prodClass) {
+        if (classesGrid is null) return;
+        _productClasses.Remove(prodClass);
+        await productclassApi.Delete(prodClass.Id);
+        await classesGrid.Reload();
+    }
+
+}
