@@ -1,0 +1,177 @@
+﻿@using RoyalERP.WebApp.Shared.API.ProductAttributes
+@using RoyalERP.WebApp.Shared.API.Products
+@using RoyalERP.WebApp.Catalog
+@inject IProductAPI productApi
+@inject IProductAttributeAPI attributeApi
+@inject DialogService dialogService
+
+<div class="row justify-content-end">
+    <div class="col mb-2">
+        <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Primary" Click="CreateProduct">
+            <i class="bi bi-plus-circle"></i><span class="ml-2">Create Product</span>
+        </RadzenButton>
+        <RadzenButton class="mr-3" ButtonStyle="ButtonStyle.Light">
+            <i class="bi bi-download"></i><span class="ml-2">Download</span>
+        </RadzenButton>
+        <RadzenButton ButtonStyle="ButtonStyle.Light">
+            <i class="bi bi-upload"></i><span class="ml-2">Upload</span>
+        </RadzenButton>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <RadzenDataGrid TItem="Product" Data="@_products" AllowFiltering="false" AllowSorting="true" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@_selectedProducts @ref="productsGrid">
+            <Columns>
+                <RadzenDataGridColumn TItem="Product" Sortable="true" Property="Name" Title="Name" Context="product">
+                    <EditTemplate>
+                        <RadzenTextBox @bind-Value="product.Name" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Product" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="120px">
+                    <Template Context="product">
+                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="(async () => await EditAttributeRow(product))" @onclick:stopPropagation="true" />
+                    </Template>
+                    <EditTemplate Context="product">
+                        <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Primary" Class="m-1" Click="(async () => await SaveAttributeRow(product))" />
+                        <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="(() => CancelAttributeEdit(product))" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Product" Context="product" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="60px">
+                    <Template Context="product">
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Class="m-1" Click="@(args => DeleteProductRow(product))" @onclick:stopPropagation="true" />
+                    </Template>
+                    <EditTemplate Context="product">
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="close" Size="ButtonSize.Small" Class="m-1" Click="@(args => DeleteProductRow(product))"/>
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </div>
+    <div class="col">
+        <RadzenCard>
+            @if (_selectedProducts.Any()) {
+                var product = _selectedProducts.First();
+
+                <div class="row">
+                    <h3>@product.Name</h3>
+                </div>
+
+                <div class="row">
+                    <ul class="list-group list-group-flush" style="border-top:0px;">
+                        @foreach (var attr in _attributesByProduct[product]) {
+                            <li class="list-group-item">@attr.Name</li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col d-flex">
+                        <RadzenDropDown TValue="string" Data="@(new string[] { "A", "B" })" />
+                    </div>
+                    <div class="col">
+                        <RadzenButton Text="Add" ButtonStyle="ButtonStyle.Secondary" />
+                    </div>
+                </div>
+
+            } else {
+                <span>Select product to edit</span>
+            }
+        </RadzenCard>
+    </div>
+</div>
+
+@code {
+
+    bool isLoading = true;
+    string errorMsg = "";
+    Exception? exception = default;
+    bool showDetailedError = false;
+
+    private List<Product> _products = new();
+    private RadzenDataGrid<Product>? productsGrid;
+
+    private List<ProductAttribute> _productAttributes = new();
+
+    private IList<Product> _selectedProducts = new List<Product>();
+    private Dictionary<Product, List<ProductAttribute>> _attributesByProduct = new();
+
+    protected override async Task OnInitializedAsync() {
+
+        await LoadData();
+
+        if (_products.Any())
+            _selectedProducts.Add(_products.First());
+
+        foreach (var product in _products) {
+
+            var attributes = new List<ProductAttribute>();
+
+            foreach (var attrId in product.Attributes) {
+
+                var attribute = _productAttributes.Where(a => a.Id.Equals(attrId)).FirstOrDefault();
+                if (attribute is null) continue;
+                attributes.Add(attribute);
+
+            }
+
+            _attributesByProduct.Add(product, attributes);
+
+        }
+
+    }
+
+    private async Task LoadData() {
+        try {
+
+            isLoading = true;
+            _products = new(await productApi.GetAll());
+            _productAttributes = new(await attributeApi.GetAll());
+            errorMsg = "";
+
+        } catch (Exception ex) {
+            errorMsg = ex.Message;
+            exception = ex;
+        } finally {
+            isLoading = false;
+        }
+    }
+
+    private async Task CreateProduct() {
+
+        if (productsGrid is null) return;
+
+        var result = await dialogService.OpenAsync<NewProductDialog>("New Product", null, null);
+
+        if (result is Product prod) {
+
+            await productsGrid.InsertRow(prod);
+            await productsGrid.UpdateRow(prod);
+
+        }
+
+    }
+
+    private async Task EditAttributeRow(Product product) {
+        if (productsGrid is null) return;
+        await productsGrid.EditRow(product);
+    }
+
+    private void CancelAttributeEdit(Product product) {
+        if (productsGrid is null) return;
+        productsGrid.CancelEditRow(product);
+    }
+
+    private async Task SaveAttributeRow(Product product) {
+        if (productsGrid is null) return;
+        await productApi.Update(product.Id, new() { Name = product.Name });
+        await productsGrid.UpdateRow(product);
+    }
+
+    private async Task DeleteProductRow(Product product) {
+        if (productsGrid is null) return;
+        _products.Remove(product);
+        await productApi.Delete(product.Id);
+        await productsGrid.Reload();
+    }
+
+}
