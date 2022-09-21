@@ -51,6 +51,8 @@
         <RadzenCard>
             @if (_selectedProducts.Any()) {
                 var product = _selectedProducts.First();
+                _selectedProductAttributes = _attributesByProduct[product];
+                _selectedProductAvailableAttributes = _productAttributes.Where(p => !_selectedProductAttributes.Contains(p)).ToList();
 
                 <div class="row">
                     <h3>@product.Name</h3>
@@ -58,7 +60,7 @@
 
                 <div class="row">
                     <ul class="list-group list-group-flush" style="border-top:0px;">
-                        @foreach (var attr in _attributesByProduct[product]) {
+                        @foreach (var attr in _selectedProductAttributes) {
                             <li class="list-group-item">@attr.Name</li>
                         }
                     </ul>
@@ -66,10 +68,10 @@
 
                 <div class="row mt-2">
                     <div class="col d-flex">
-                        <RadzenDropDown TValue="string" Data="@(new string[] { "A", "B" })" />
+                        <RadzenDropDown TValue="ProductAttribute" TextProperty="Name" Data="_selectedProductAvailableAttributes" @bind-value="_selectedAttribute" />
                     </div>
                     <div class="col">
-                        <RadzenButton Text="Add" ButtonStyle="ButtonStyle.Secondary" />
+                        <RadzenButton Text="Add" ButtonStyle="ButtonStyle.Secondary" Click="AddSelectedAttribute" />
                     </div>
                 </div>
 
@@ -91,9 +93,13 @@
     private RadzenDataGrid<Product>? productsGrid;
 
     private List<ProductAttribute> _productAttributes = new();
+    private Dictionary<Product, List<ProductAttribute>> _attributesByProduct = new();
 
     private IList<Product> _selectedProducts = new List<Product>();
-    private Dictionary<Product, List<ProductAttribute>> _attributesByProduct = new();
+    private List<ProductAttribute> _selectedProductAttributes = new();
+    private List<ProductAttribute> _selectedProductAvailableAttributes = new();
+
+    private ProductAttribute? _selectedAttribute;
 
     protected override async Task OnInitializedAsync() {
 
@@ -172,6 +178,16 @@
         _products.Remove(product);
         await productApi.Delete(product.Id);
         await productsGrid.Reload();
+    }
+
+    private async Task AddSelectedAttribute() {
+
+        if (_selectedAttribute is null) return;
+        var product = _selectedProducts.FirstOrDefault();
+        if (product is null) return;
+
+        await productApi.AddAttribute(product.Id, new() { AttributeId = _selectedAttribute.Id });
+
     }
 
 }
