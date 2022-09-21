@@ -7,106 +7,24 @@
 
 <PageTitle>Catalog</PageTitle>
 
-@if(isLoading) {
-    <p>Loading...</p>
-} else {
+<div class="container">
 
-    <div class="container">
+    <RadzenTabs>
+        <Tabs>
 
-        <RadzenTabs>
-            <Tabs>
+            <RadzenTabsItem Text="Products">
+                <Products />
+            </RadzenTabsItem>
 
-                <RadzenTabsItem Text="Products">
-                    <Products />
-                </RadzenTabsItem>
+            <RadzenTabsItem Text="Classes">
+                <ProductClasses />
+            </RadzenTabsItem>
 
-                <RadzenTabsItem Text="Classes">
-                    <ProductClasses />
-                </RadzenTabsItem>
+            <RadzenTabsItem Text="Attributes">
+                <ProductAttributes />
+            </RadzenTabsItem>
 
-                <RadzenTabsItem Text="Attributes">
-                    <ProductAttributes />
-                </RadzenTabsItem>
+        </Tabs>
+    </RadzenTabs>
 
-            </Tabs>
-        </RadzenTabs>
-
-    </div>
-
-}
-
-@if (!string.IsNullOrEmpty(errorMsg)) {
-    <p style="color:red">@errorMsg</p>
-    @if (!showDetailedError) {
-        <button @onclick="ShowExceptionDetails">Details</button>
-    } else {
-        <p>@(exception?.ToString() ?? "no details.")</p>
-    }
-}
-
-@code {
-
-    bool isLoading = true;
-    string errorMsg = "";
-    Exception? exception = default;
-    bool showDetailedError = false;
-
-    private List<Product> _products = new();
-    private RadzenDataGrid<Product>? productsGrid;
-
-    private List<ProductAttribute> _productAttributes = new();
-
-    private IList<Product> _selectedProducts = new List<Product>();
-    private Dictionary<Product, List<ProductAttribute>> _attributesByProduct = new();
-
-    protected override async Task OnInitializedAsync() {
-
-        await LoadData();
-
-        if (_products.Any())
-            _selectedProducts.Add(_products.First());
-
-        foreach (var product in _products) {
-
-            var attributes = new List<ProductAttribute>();
-
-            foreach (var attrId in product.Attributes) {
-
-                var attribute = _productAttributes.Where(a => a.Id.Equals(attrId)).FirstOrDefault();
-                if (attribute is null) continue;
-                attributes.Add(attribute);
-
-            }
-
-            _attributesByProduct.Add(product, attributes);
-
-        }
-
-    }
-
-    private async Task LoadData() {
-        try {
-
-            isLoading = true;
-            _products = new(await productApi.GetAll());
-            _productAttributes = new(await attributeApi.GetAll());
-            errorMsg = "";
-
-        } catch (Exception ex) {
-            errorMsg = ex.Message;
-            exception = ex;
-        } finally {
-            isLoading = false;
-        }
-    }
-
-    private async Task DeleteProductRow(Product product) {
-        if (productsGrid is null) return;
-        _products.Remove(product);
-        await productApi.Delete(product.Id);
-        await productsGrid.Reload();
-    }
-
-    private void ShowExceptionDetails() => showDetailedError = true;
-
-}
+</div>
