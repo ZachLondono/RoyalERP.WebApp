@@ -785,6 +785,28 @@ public class ExampleProductData : IProductAPI {
 
     }
 
+    public Task<Product?> Create(NewProduct newProduct) {
+
+        Product? product = new() {
+            Id = Guid.NewGuid(),
+            Name = newProduct.Name,
+            Attributes = Enumerable.Empty<Guid>(),
+        };
+
+        _products.Add(product);
+
+        return Task.FromResult((Product?) product);
+
+    }
+
+    public Task<Product?> Update(Guid productId, ProductUpdate update) {
+
+        var existing = _products.First(p => p.Id == productId);
+        existing.Name = update.Name;
+        return Task.FromResult((Product?) existing);
+
+    }
+
 }
 
 public class ExampleProductClassData : IProductClassAPI {

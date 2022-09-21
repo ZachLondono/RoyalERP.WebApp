@@ -14,4 +14,10 @@ public interface IProductAPI {
     [Delete("/products/{productId}")]
     public Task Delete(Guid productId);
 
+    [Post("/products")]
+    public Task<Product?> Create(NewProduct newProduct);
+
+    [Post("/products/{productId}")]
+    public Task<Product?> Update(Guid productId, ProductUpdate update);
+
 }
