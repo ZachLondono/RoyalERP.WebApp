@@ -1,8 +1,10 @@
 ﻿@using RoyalERP.WebApp.Shared.API.ProductAttributes
 @using RoyalERP.WebApp.Shared.API.Products
+@using RoyalERP.WebApp.Shared.API.ProductClasses
 @using RoyalERP.WebApp.Catalog
 @inject IProductAPI productApi
 @inject IProductAttributeAPI attributeApi
+@inject IProductClassAPI classApi
 @inject DialogService dialogService
 
 <div class="row justify-content-end">
@@ -53,9 +55,12 @@
                 var product = _selectedProducts.First();
                 _selectedProductAttributes = _attributesByProduct[product];
                 _selectedProductAvailableAttributes = _productAttributes.Where(p => !_selectedProductAttributes.Contains(p)).ToList();
-
+                
                 <div class="row">
                     <h3>@product.Name</h3>
+                </div>
+                <div class="row">
+                    <RadzenDropDown AllowClear="true" TValue="ProductClass" TextProperty="Name" Data="_productClasses" Change="ProductClassChange"/>
                 </div>
 
                 <div class="row">
@@ -98,6 +103,8 @@
     private List<ProductAttribute> _productAttributes = new();
     private Dictionary<Product, List<ProductAttribute>> _attributesByProduct = new();
 
+    private List<ProductClass> _productClasses = new();
+
     private IList<Product> _selectedProducts = new List<Product>();
     private List<ProductAttribute> _selectedProductAttributes = new();
     private List<ProductAttribute> _selectedProductAvailableAttributes = new();
@@ -135,6 +142,7 @@
             isLoading = true;
             _products = new(await productApi.GetAll());
             _productAttributes = new(await attributeApi.GetAll());
+            _productClasses = new(await classApi.GetAll());
             errorMsg = "";
 
         } catch (Exception ex) {
@@ -197,6 +205,17 @@
         _attributesByProduct[product].Add(_selectedAttribute);
         await productApi.AddAttribute(product.Id, new() { AttributeId = _selectedAttribute.Id });
 
+    }
+
+    private async Task ProductClassChange(ProductClass? selectedItem) {
+        var product = _selectedProducts.FirstOrDefault();
+        if (product is null) return;
+
+        if (selectedItem is null) {
+            await productApi.RemoveClass(product.Id);
+        } else {
+            await productApi.SetClass(product.Id, new() { ClassId = selectedItem.Id } );
+        }
     }
 
 }

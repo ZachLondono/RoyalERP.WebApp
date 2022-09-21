@@ -26,4 +26,10 @@ public interface IProductAPI {
     [Delete("/products/{productId}/attributes/{attributeId}")]
     public Task<Product?> RemoveAttribute(Guid productId, Guid attributeId);
 
+    [Put("/products/{productId}/class/")]
+    public Task<Product?> SetClass(Guid productId, ProductClassAdd prodClass);
+
+    [Delete("/products/{productId}/class")]
+    public Task<Product?> RemoveClass(Guid productId);
+
 }
