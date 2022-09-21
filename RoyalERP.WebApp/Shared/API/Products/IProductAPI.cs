@@ -20,4 +20,10 @@ public interface IProductAPI {
     [Post("/products/{productId}")]
     public Task<Product?> Update(Guid productId, ProductUpdate update);
 
+    [Put("/products/{productId}/attributes")]
+    public Task<Product?> AddAttribute(Guid productId, ProductAttributeAdd attribute);
+
+    [Delete("/products/{productId}/attributes/{attributeId}")]
+    public Task<Product?> RemoveAttribute(Guid productId, Guid attributeId);
+
 }

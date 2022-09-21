@@ -807,6 +807,19 @@ public class ExampleProductData : IProductAPI {
 
     }
 
+    public Task<Product?> AddAttribute(Guid productId, ProductAttributeAdd attribute) {
+        var product = _products.First(p => p.Id == productId);
+        var attributes = product.Attributes.ToList();
+        attributes.Add(attribute.AttributeId);
+        product.Attributes = attributes;
+        return Task.FromResult((Product?)product);
+    }
+
+    public Task<Product?> RemoveAttribute(Guid productId, Guid attributeId) {
+        var product = _products.First(p => p.Id == productId);
+        product.Attributes = product.Attributes.Where(a => a != attributeId);
+        return Task.FromResult((Product?)product);
+    }
 }
 
 public class ExampleProductClassData : IProductClassAPI {
